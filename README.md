@@ -2,18 +2,24 @@
 
 ## 💡Items
 
-- Ideas in my brain.
+- Ideas in my brain
+
+- Draft of my paper (coming soon, soon)
 
 ## 🌲Branches
 
-- __Main branch__: Items already determined to use. (Possibly change)
+- __main__: Full version if integration in dev branch looks fine.
 
-- Each section's branch: Rondom plans or ideas.
+- __dev__ : dev branch gathers feature/* branches if feature/* branches look good and acceptable.
+
+- __feature__: feature/* branches comprise several sections of my paper, which are places to keep my ideas/draft.
 
 ## 🐧Rules
 
-- Ideas should be placed on the most possible section's branch.
+- Work in feature/* branches, gather them into dev branch, check dev branch, and send to main.
 
-- The ideas would be merged with main branch if they look good and acceptable🎁
+- Ideas should be placed on the most possible section's branch (feature/"secition's name").
+
+- The feature would be merged with dev branch if they look good and acceptable🎁
 
 - Stay healthy.
