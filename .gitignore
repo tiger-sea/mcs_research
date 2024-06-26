@@ -5,3 +5,4 @@
 /ideas/**
 !/ideas/**/
 !/ideas/**/.gitkeep
+!/ideas/**/*.md
