@@ -1,2 +1,3 @@
-/src/data/
-!/src/data/sample.txt
+/src/data/**
+!/src/data/**/
+!/src/data/**/sample.txt
