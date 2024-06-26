@@ -1,0 +1,7 @@
+/src/data/**
+!/src/data/**/
+!/src/data/**/sample.txt
+
+/ideas/**
+!/ideas/**/
+!/ideas/**/.gitkeep
