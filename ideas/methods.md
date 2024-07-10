@@ -18,12 +18,21 @@
     - 心拍変動の変化点以前になにか特徴的な気象の変動があったと
 
 - ARモデル系のパラメータをベイズ推定
+    - AR系は外生変数を含まないから今回には合わない．
+
+- ARIMAX, SARIMAX, RegARIMA系 + ベイズ推定
+    - わからん
 
 __どうして状態空間モデルを使うのか，or どうしてARモデル系を使うのか．そこをはっきりさせたい．__
+- ARモデル系は定常過程に変換しなきゃいけないから，そのあとの解釈が容易でない?
 
 __ベイズ統計を使うと何が嬉しいの?__
+- モデルのパラメータが確率分布で表現できるから，影響するパラメータの値の範囲が見えて、解釈しやすい．
+- 
 
 ### Tips
+
+- モデル選択は何を基準に進めるの? WAICとかいろいろあるよね
 
 - 変数減少法とか
 
@@ -31,12 +40,15 @@ __ベイズ統計を使うと何が嬉しいの?__
 
 - CVの切り方，最後の数ヶ月を検証用データとして切っておくとか，Leave-one-out
 
+- どうモデルを理解すればいいの?係数の比較によってかな
+
 - ベイズ統計で分析する時に報告すべき情報たち [Bayesian analysis guildelines](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8526359/)
     - 事前分布は何を設定したの?
     - 信頼区間は何を設定したの?
     - 感度分析 (?)
     - MCMCの収束はどう判断したの?
     - どんなモデルを使ったの?
+    - どうやってモデル選択したの?
 
 ### Visualization
 
@@ -48,23 +60,67 @@ __ベイズ統計を使うと何が嬉しいの?__
 
 ## HRV parameters
 
-- RMSSD, pNN50 (Time domain)
+Time domain
+- Heart rate (beats/min)
+- SDNN, RMSSD (msec)
+- pnn50 (%)
+- TINN (msec) (?)
 
-- LF, HF, LFnu, HFnu (Freq. domain)
+Frequency domain
+- VLF, LF, HF ($msec^2$)
+- LF/HF (%)
 
-- [HRV parameters calculation](https://github.com/MarcusVollmer/HRV)
+Non-linear domain
+- CD (-)
+- ApEn (-)
+- SD1, SD2 (msec)
+- SD1/SD2 (%)
+
+[HRV parameters calculation](https://github.com/MarcusVollmer/HRV)
+
+相関があるやつはどっちか消してもいいかな
+-> 相関のヒートマップから判断してもいいかな，自律神経系の指標となりうるものを優先して残しながら選択していけばいいと思う
 
 ## Meteorological factors
 
 ### Features (daily)
 
-- Temperature (℃)
-- Relative humidity (%) or Dew point
-- Wind speed (m/sec)
-- Atmospheric pressure (hPa)
-    - above sea or above ground
-- Total sun hour (hour)
-- Total precipitation (mm)
+- 湿度系
+    - 日平均蒸気圧 (hPa)
+    - 日平均相対湿度 (%)
+    - 日最小相対湿度 (%)
+    - 日最小値の発生時刻 (option)
+
+- 気圧系
+    - 日平均現地気圧 (hPa)
+    - 日平均海面気圧 (hPa)
+    - 日最低海面気圧 (hPa)
+    - 日最低海面気圧発生時刻 (option)
+
+- 雨系
+    - 日合計降水量 (mm)
+    - 日最大1時間降水量 (mm)
+    - 日最大1時間降水の発生時刻 (option)
+
+- 日光系
+    - 日合計日照時間 (hour)
+
+- 気温系
+    - 日平均気温 (℃)
+    - 日最高気温 (℃)
+    - 日最高気温発生時刻 (option)
+    - 日最低気温 (℃)
+    - 日最低気温発生時刻 (option)
+
+- 風系
+    - 日平均風速 (m/s)
+    - 日最大風速 (m/s)
+    - 日最大風速発生時刻 (option)
+    - 日最大風速風向 (東西南北)
+    - 日瞬間最大風速 (m/s)
+    - 日瞬間最大風速発生時刻 (option)
+    - 日瞬間最大風速風向 (東西南北)
+    - 日最多風向 (東西南北)
 
 ---
 
@@ -73,7 +129,7 @@ Possible
 - _Weathr front_
 - _Thunder_
 - _Fog_
-- _真夏日，猛暑日，ゲリラ豪雨，台風，爆弾低気圧(要定義確認)みたいな気象イベント_
+- _真夏日，猛暑日，ゲリラ豪雨，台風，爆弾低気圧(要定義確認)，熱帯夜みたいな気象イベント_
 - _連続した雨とか曇りの日_
 - _平均だけとかじゃなくて，ある特定の時間のデータを使う_
 - _四季_
@@ -87,3 +143,8 @@ Possible
 - 前日との差 (前日に限らず)
 - Max - Min
 - ラグを取る
+- 同じような変動をするやつでも使ってみる?
+    - 範囲が違うからいいかな，
+
+## Figure
+- 使った特徴量を気象要因とHRVでそれぞれ表をつくる
