@@ -87,17 +87,18 @@ Frequency domain
 - VLF, LF, HF ($msec^2$)
 - LF/HF (%)
 
-Non-linear domain
-- CD (-)
-- ApEn (-)
-- SD1, SD2 (msec)
-- SD1/SD2 (%)
+
+_Non-linear_ domain (option  time/frequency domain params are not related)
+- _CD_ (-)
+- _ApEn_ (-)
+- _SD1, SD2_ (msec)
+- _SD1/SD2_ (%)
 
 [HRV parameters calculation](https://github.com/MarcusVollmer/HRV)
 
 相関があるやつはどっちか消してもいいかな
 -> 相関のヒートマップから判断してもいいかな，自律神経系の指標となりうるものを優先して残しながら選択していけばいいと思う
--> SD1はRMSSD，SD2はLF，SD1/SD2はLF/HFと相関があるからいらない？？？
+-> ~~SD1はRMSSD，SD2はLF，SD1/SD2はLF/HFと相関があるからいらない？？？~~ オプションとして残しておくけど，使わない可能性大
 
 ## Meteorological factors
 
