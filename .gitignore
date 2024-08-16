@@ -6,3 +6,6 @@
 !/ideas/**/
 !/ideas/**/.gitkeep
 !/ideas/**/*.md
+
+/src/scripts/analysis/build
+/src/scripts/trash_box
