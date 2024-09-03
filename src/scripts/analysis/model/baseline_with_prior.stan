@@ -3,19 +3,21 @@ data {
     int D; // the number of features
     matrix[T, D] features; // explanatory variable x (independent variable)
     vector[T] y; // outcome variable y (dependent vairable)
+
+    int T_pred; // length of prediction day
+    matrix[T_pred, D] features_pred; // features for prediction
 }
 
 parameters {
     vector<lower=0, upper=10000>[T] mu; // state
     real<lower=0, upper=10000> mu_zero; // initial state
     real<lower=0> sigma_w; // process noise standard deviation
-    real<lower=0> sigma_v; // observation noise standard deviation
+    real<lower=0> sigma_y; // observation noise standard deviation
 
     // vector[T] trend;
     // real<lower=0> sigma_trend;
 
     vector[D] beta; // partial regression coefficients
-
     real<lower=0> tau; // parameter of prior distribition for beta
 }
 
@@ -34,31 +36,45 @@ model {
     }
 
     // trend estimation
+    // vector[T] diff;
+    // vector[T] cum_trend;
     // for(t in 3:T) {
     //     trend[t] ~ normal(2*trend[t-1]-trend[t-2], sigma_trend);
     // }
-
+    // cum_trend[1] = 
 
     // State equation
-    mu[1] ~ normal(mu_zero, sigma_w);
-    for(t in 2:T) {
-        mu[t] ~ normal(mu[t-1], sigma_w);
-    }
+    mu[2:T] ~ normal(mu[1:T-1], sigma_w);
 
     // Observation equation
-    for(t in 1:T) {
-        y[t] ~ normal(alpha[t], sigma_v);
-    }
+    y ~ normal(alpha, sigma_y);
 }
 
 generated quantities {
     vector[T] log_lik; // for WAIC calculation
     for(t in 1:T) {
-        log_lik[t] = normal_lpdf(y[t] | alpha[t], sigma_v);
+        log_lik[t] = normal_lpdf(y[t] | alpha[t], sigma_y);
     }
 
-    vector[T] y_pred; // prediction
+    // prediction
+    vector[T + T_pred] mu_all;
+    vector[T + T_pred] alpha_all;
+    vector[T_pred] y_pred;
+    mu_all[1:T] = mu; // same values within T 
+    alpha_all[1:T] = alpha; // same values within T
+    for(t in 1:T_pred) {
+        mu_all[T + t] = normal_rng(mu_all[T + t - 1], sigma_w);
+
+        // Calculate alpha at time T + t
+        alpha_all[T + t] = mu_all[T + t] + dot_product(features_pred[t, ], beta);
+
+        // Predict y at time T + t using the predicted alpha
+        y_pred[t] = normal_rng(alpha_all[T + t], sigma_y);
+    }
+    
+    // just in case
+    vector[T] pred;
     for(t in 1:T) {
-        y_pred[t] = normal_rng(alpha[t], sigma_v);
+        pred[t] = normal_rng(alpha[t], sigma_y);
     }
 }
