@@ -9,39 +9,60 @@ data {
 }
 
 parameters {
+    // state space model params
     vector<lower=0, upper=10000>[T] mu; // state
-    real<lower=0, upper=10000> mu_zero; // initial state
     real<lower=0> sigma_w; // process noise standard deviation
     real<lower=0> sigma_y; // observation noise standard deviation
 
-    // vector[T] trend;
-    // real<lower=0> sigma_trend;
+    // seasonality and trend params
+    vector[T] season;
+    real<lower=0> sigma_season;
+    vector[T] trend;
+    real<lower=0> sigma_trend;
 
+    // prior distribution params
     vector[D] beta; // partial regression coefficients
     real<lower=0> tau; // parameter of prior distribition for beta
 }
 
 transformed parameters {
-    vector<lower=0>[T] alpha; // for regression model
+    // cumulative trend
+    vector[T] cum_trend;
+    cum_trend[1] = trend[1];
+    for(t in 2:T) {
+        cum_trend[t] = cum_trend[t-1] + trend[t];
+    }
+
+    // mu (state) included trend and seasonality
+    vector[T] mu_with_component;
     for(t in 1:T) {
-        alpha[t] = mu[t] + dot_product(features[t, ], beta);
+        mu_with_component[t] = mu[t] + cum_trend[t] + season[t];
+    }
+    
+    // regression model
+    vector<lower=0>[T] alpha;
+    for(t in 1:T) {
+        alpha[t] = mu_with_component[t] + dot_product(features[t, ], beta);
     }
 }
 
 model {
-
     // prior distribution for each beta (coefficient)
     for(d in 1:D) {
         beta[d] ~ double_exponential(0, tau);
     }
 
+    // https://tjo.hatenablog.com/entry/2020/04/29/152412
+    // seasonality estimation (assume 7 days seasonality)
+    for(t in 7:T) {
+        season[t] ~ normal(-season[t-1] - season[t-2] - season[t-3]
+                                - season[t-4] - season[t-5] - season[t-6], sigma_season);	
+    }
+
     // trend estimation
-    // vector[T] diff;
-    // vector[T] cum_trend;
-    // for(t in 3:T) {
-    //     trend[t] ~ normal(2*trend[t-1]-trend[t-2], sigma_trend);
-    // }
-    // cum_trend[1] = 
+    for(t in 3:T) {
+        trend[t] ~ normal(2*trend[t-1]-trend[t-2], sigma_trend);
+    }
 
     // State equation
     mu[2:T] ~ normal(mu[1:T-1], sigma_w);
@@ -57,19 +78,19 @@ generated quantities {
     }
 
     // prediction
-    vector[T + T_pred] mu_all;
-    vector[T + T_pred] alpha_all;
+    vector[T+T_pred] mu_all;
+    vector[T+T_pred] alpha_all;
     vector[T_pred] y_pred;
     mu_all[1:T] = mu; // same values within T 
     alpha_all[1:T] = alpha; // same values within T
     for(t in 1:T_pred) {
-        mu_all[T + t] = normal_rng(mu_all[T + t - 1], sigma_w);
+        mu_all[T+t] = normal_rng(mu_all[T+t-1], sigma_w);
 
         // Calculate alpha at time T + t
-        alpha_all[T + t] = mu_all[T + t] + dot_product(features_pred[t, ], beta);
+        alpha_all[T+t] = mu_all[T+t] + dot_product(features_pred[t, ], beta);
 
         // Predict y at time T + t using the predicted alpha
-        y_pred[t] = normal_rng(alpha_all[T + t], sigma_y);
+        y_pred[t] = normal_rng(alpha_all[T+t], sigma_y);
     }
     
     // just in case
