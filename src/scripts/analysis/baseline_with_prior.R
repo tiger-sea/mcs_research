@@ -16,6 +16,7 @@ library(ggfortify)
 library(gridExtra)
 library(patchwork)
 library(ggplot2)
+source("./mcs_research/src/scripts/analysis/kkplot.R")
 
 
 ## Stan setting ---------------------------------------------------------
@@ -30,18 +31,21 @@ date <- as.Date(date)
 
 ### Delete unnecessary columns
 df_weather <- df_weather %>%
-                select(-c("date", "day_of_week", "max_gust",
-                          "max_wind_speed", "mean_press"))
+                    select(-c("date", "day_of_week", "max_gust",
+                              "max_wind_speed", "mean_press",
+                              "mean_vapor", "max_depth"))
 
 ## Set list of data for stan code ---------------------------------------
-num_pred = 30
-T = nrow(df_weather) - num_pred
+num_pred <- 30 # length of prediction data
+T <- nrow(df_weather) - num_pred # length of data for estimation
+y <- df_hrv$TINN # dependent variable y
 data_list <- list(
     T = T, # data length without last 30 days
     D = ncol(df_weather), # the number of features
-    features = t(t(df_weather[1:T, ])),
-    y = df_hrv$HR[1:T],
-    T_pred = num_pred,
+    features = t(t(df_weather[1:T, ])), # explanatory variable
+    y = y[1:T], # dependent variable
+    T_pred = num_pred, # length of prediction
+    # explanatory data of prediction
     features_pred = t(t(df_weather[(T+1):(T+num_pred), ]))
 )
 
@@ -50,18 +54,18 @@ model <- stan(
     file = "./mcs_research/src/scripts/analysis/model/baseline_with_prior.stan",
     data = data_list,
     seed = 1,
-    iter = 5000,
-    warmup = 2000,
-    chains = 1,
+    iter = 500,
+    warmup = 250,
+    chains = 4,
     # control = c(max_treedepth = 15)
 )
 
-# saveRDS(model, file = "./mcs_research/src/scripts/analysis/model/basic_6_cauchy.obj")
+# saveRDS(model, file = "../../model/bwp_season_HR_30.obj")
 
 ## Results check --------------------------------------------------------
 mcmc_result <- rstan::extract(model)
 
-## WAIC calculation
+### WAIC calculation
 log_lik <- extract_log_lik(model)
 waic(log_lik)
 # loo(log_lik)
@@ -76,79 +80,65 @@ ggplot(beta_hist, aes(x=value)) +
     geom_histogram(bins = 50) +
     facet_wrap(~beta)
 
-hist(mcmc_result$beta[, 1], breaks = 100)
-hist(mcmc_result$sigma_w)
-hist(mcmc_result$sigma_v)
-
 ### organize coefficients results
 beta_result <- data.frame(colnames(df_weather),
            apply(mcmc_result$beta, MARGIN = 2, mean))
+
 colnames(beta_result) <- c("feature", "coef_mean")
-beta_result[order(beta_result$coef_mean),]
 beta_result[order(abs(beta_result$coef_mean), decreasing = TRUE),]
 
-
-traceplot(model, pars = c("beta", "sigma_w", "sigma_y"))
-stan_trace(model, inc_warmup = TRUE, pars = c("beta"))
-mcmc_rhat(rhat(model, pars = "beta"))
+# traceplot(model, pars = c("beta", "sigma_w", "sigma_y"))
+stan_trace(model, inc_warmup = TRUE, pars = c("beta", "sigma_w", "sigma_y"))
+rhat(model, pars = c("beta", "sigma_w", "sigma_y"))
+# mcmc_rhat(rhat(model, pars = "beta"))
 
 ### Plot estimated results --------------------------------------------------
+# df_stan <- make_ci_df(mcmc_result$mu) # mu, alpha
 res <- t(apply(
-    X = mcmc_result$mu,
+    X = mcmc_result$alpha, # not for *_all, cuz useless, and for mu, alpha, pred
     MARGIN = 2,
     FUN = quantile,
-    probs =c(0.025, 0.5, 0.975)
+    probs = c(0.025, 0.5, 0.975)
 ))
 
 colnames(res) <- c("lwr", "fit", "upr")
 
 df_stan <- cbind(
-    data.frame(y = data_list$y, time=date[1:T]),
+    data.frame(y = y[1:nrow(res)], time=date[1:nrow(res)]),
     as.data.frame(res)
 )
 
-ggplot(data = df_stan, aes(x=time, y=y)) +
-    geom_point(alpha=0.6, size=0.9) +
-    geom_line(aes(y=fit), linewidth=1.2, color="red") +
-    geom_ribbon(aes(ymin=lwr, ymax=upr), alpha=0.3) +
-    title("") +
-    scale_x_date(date_labels = "%Y-%m",
-                 date_breaks = "6 month",) +
-    theme(axis.text.x = element_text(angle = 90),
-          aspect.ratio = 3/10)
+plot_ssm(df_stan)
 
 ### Plot prediction result --------------------------------------------------
+df_stan <- make_ci_df(mcmc_result$pred) # prediction interval before y_pred
 res_pred <- t(apply(
-    X = mcmc_result$y_pred,
-    MARGIN = 2,
+    X = mcmc_result$y_pred, # for y_pred
+    MARGIN = 2, # row-major (process by row)
     FUN = quantile,
     probs=c(0.025, 0.5, 0.975)
 ))
 colnames(res_pred) <- c("lwr", "fit", "upr")
+
+# prepare data frame of predicted values
 df_pred <- cbind(
-    data.frame(y = df_hrv$HR[(T+1):(T+num_pred)], time=date[(T+1):(T+num_pred)]),
+    data.frame(y = y[(T+1):(T+num_pred)], time=date[(T+1):(T+num_pred)]),
     as.data.frame(res_pred)
 )
 
-df_pred <- bind_rows(df_stan, df_pred) # combine 
+df_all <- bind_rows(df_stan, df_pred) # combine predicted data
 
-ggplot(data = df_pred, aes(x=time, y=y)) +
-    geom_point(alpha=0.6, size=0.9) +
-    geom_line(aes(y=fit), linewidth=1.2, color="red") +
-    geom_ribbon(aes(ymin=lwr, ymax=upr), alpha=0.3) +
-    title("") +
-    scale_x_date(date_labels = "%Y-%m",
-                 date_breaks = "6 month",) +
-    theme(axis.text.x = element_text(angle = 90),
-          aspect.ratio = 3/10)
+plot_ssm(df_all)
 
+plot_pred(df_all, data_list$T_pred, T, focus = T) # plot prediction result
 
 # check residuals
-hist(data_list$y-df_stan$fit, breaks = 100)
+# hist(data_list$y - df_stan$fit, breaks = 100)
+hist(df_pred$fit - df_pred$y, breaks = 100)
 
 # check evaluation index
-sqrt(sum((df_stan$fit - data_list$y) ^ 2) / data_list$T) # RMSE
+# sqrt(sum((df_stan$fit - data_list$y) ^ 2) / data_list$T) # RMSE
+sqrt(sum((df_pred$fit - df_pred$y) ^ 2) / data_list$T_pred) # RMSE
 
-ggplot() +
-    geom_line(aes(x=date, y=data_list$y)) +
-    theme(aspect.ratio = 3/10)
+plot(df_pred$fit - df_pred$y, type="l")
+acf((df_pred$fit - df_pred$y), lag.max = 30)
