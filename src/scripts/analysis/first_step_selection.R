@@ -1,6 +1,6 @@
-# First step for estimation, prediction, and evaluation --------------------
+# Feature selection by size of coefficients after model estimation ------
 
-## Import ------------------------------------------------------------------
+## Import ---------------------------------------------------------------
 
 ### Bayes
 library(rstan)
@@ -30,7 +30,7 @@ df_weather <- read.csv("./mcs_research/src/data/weather/weather_imputed.csv") # 
 date <- as.Date(df_weather$date)
 
 df_hrv <- left_join(df_weather, df_hrv, by = "date") %>%
-            select(-c(colnames(df_weather)))
+    select(-c(colnames(df_weather)))
 
 ### Delete unnecessary columns ------------------------------------------
 df_weather <- df_weather %>%
@@ -46,7 +46,7 @@ df_weather <- as.data.frame(scale(df_weather))
 ## Set list of data for stan code ---------------------------------------
 num_pred = 30 # length of prediction data
 T <- nrow(df_weather) - num_pred # length of data for estimation
-y <- df_hrv$HR # dependent variable y
+y <- df_hrv$LFHFratio # dependent variable y
 I <- sum(is.na(y[1:T])) # not include missing values during prediction period
 y[is.na(y[1:T])] <- -1 # nan flag for stan (remain missing values during prediction period)
 
@@ -60,23 +60,8 @@ data_list <- list(
     features_pred = t(t(df_weather[(T+1):(T+num_pred), ]))
 )
 
-## Estimate parameters by stan MCMC -------------------------------------
-# Check: which HRV?
-#        stan code includes seasonality or not?
-#        correct saveRDS file name?
-model <- stan(
-    file = "./mcs_research/src/scripts/analysis/model/first_step.stan",
-    data = data_list,
-    seed = 1,
-    iter = 500,
-    warmup = 250,
-    chains = 4,
-    # thin = 4
-    # control = c(max_treedepth = 15)
-)
-
-### Save sampling results (Need to change file name, the results are huge size of file)
-# saveRDS(model, file = "../../model/first_step/LFHF.obj")
+## Load MCMC sample data ------------------------------------------------
+model <- readRDS("../../model/first_step_season/LFHF.obj")
 
 ## Check results --------------------------------------------------------
 mcmc_result <- rstan::extract(model)
@@ -116,6 +101,9 @@ mean(mcmc_result$sigma_y)
 ggplot() +
     geom_line(aes(x=1:T, y=apply(mcmc_result$season, 2, mean)))
 
+ggplot() +
+    geom_line(aes(x=1:T, y=apply(mcmc_result$mu, 2, mean)-apply(mcmc_result$mu_with_component, 2, mean)+apply(mcmc_result$season, 2, mean)))
+
 ### Plot estimated results --------------------------------------------------
 
 #### Impute predicted values at y missing values
@@ -132,7 +120,7 @@ df_stan <- make_ci_df(mcmc_result$pred, y=y_filled, is_pred = FALSE) # predictio
 df_pred <- make_ci_df(mcmc_result$y_pred, y_filled, is_pred = TRUE, T = T, num_pred = num_pred)
 df_all <- bind_rows(df_stan, df_pred) # combine predicted data
 
-plot_pred(df_all, data_list$T_pred, T, focus=TRUE) # plot prediction result
+plot_pred(df_all, data_list$T_pred, T, focus=FALSE) # plot prediction result
 
 mean(mcmc_result$sigma_y)
 
