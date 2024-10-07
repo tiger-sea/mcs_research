@@ -31,16 +31,10 @@ parameters {
 }
 
 transformed parameters {
-    // mu (state) included trend and seasonality
-    vector[T] mu_with_component;
-    for(t in 1:T) {
-        mu_with_component[t] = mu[t] + season[t];
-    }
-    
     // regression model
     vector<lower=0>[T] alpha;
     for(t in 1:T) {
-        alpha[t] = mu_with_component[t] + dot_product(features[t, ], beta);
+        alpha[t] = mu[t] + dot_product(features[t, ], beta);
     }
 }
 
@@ -55,7 +49,8 @@ model {
     }
 
     // state equation
-    mu[3:T] ~ normal(2*mu[2:T-1]-mu[1:T-2], sigma_w);
+    // mu[2:T] ~ normal(mu[1:T-1], sigma_w); // 1st trend
+    mu[3:T] ~ normal(2*mu[2:T-1]-mu[1:T-2], sigma_w); // 2nd trend
 
     // observation equation (for both observed and missing values)
     int miss = 0;
