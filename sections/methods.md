@@ -95,7 +95,7 @@ HRV parameters derived from ECG data are calculated using software MATLAB R2023a
 \begin{figure}
     \centering
     \includegraphics[scale=0.5]{./Figure/figure/ecg_preprocess.png}
-    \caption{An example of R-R interval sequence}
+    \caption{Flow of R peaks detection for R-R interval calculation}
     \label{fig:ecg}
 \end{figure}
 
@@ -106,13 +106,36 @@ HRV parameters derived from ECG data are calculated using software MATLAB R2023a
     \label{fig:rri}
 \end{figure}
 
-Many of HRV parameters have practical meaning to diagnose diseases and monitor health condition change [an overview]. For example, RMSSD, one of time domain HRV parameters, can be considered as an indicator of parasympathetic nervous system's fluctuation. LF/HF, one of frequency domain HRV parameters, could be interpreted as balance between sympathetic and parasympathetic nervous systems. Furthermore, SDNN is applied to predict mortality in medical situation, classifying the value of SDNN based on its size [an overview]. In those manner, HRV parameters are utilized in various way to evaluate our health condition by using ECG data or any other biosignal.
+Many of HRV parameters have practical meaning to diagnose diseases and monitor health condition change [an overview]. For example, RMSSD, one of time domain HRV parameters, can be considered as an indicator of parasympathetic nervous system's fluctuation. LF/HF, one of frequency domain HRV parameters, could be interpreted as balance between sympathetic and parasympathetic nervous systems. Furthermore, SDNN is applied to predict mortality in medical situation, classifying the value of SDNN based on its size [an overview]. In those manner, HRV parameters are utilized in various ways to evaluate our health condition by using ECG data or any other biosignal.
 
 
 \subsection{Imputation of Missing Values in Meteorological Factors}
 % good but not checked
 % need to change figure properly
-The meteorological data contained several missing values because of replacement or malfunction of the measurement equipment [url]. In total, there were 14 days which included missing values in some meteorological factors data.
+The meteorological data contained several missing values because of replacement or malfunction of the measurement equipment [url]. In total, there were 14 days which included missing values in some meteorological factors data as shown in Table \ref{table:missing}.
+
+\begin{table}[htbp]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \caption{List of dates included missing values in meteorological data}
+    \label{table:missing}
+    \begin{tabular}{l l}
+        \hline
+        \textbf{Factor} & \textbf{Missing dates (YYYY-MM-DD)} \\
+        \hline
+        Temperature & No missing dates \\
+        Relative humidity & 2017-10-22, 2017-10-23, 2017-10-24 \\
+        Sea-level atmospheric pressure & No missing dates \\
+        Precipitation & 2019-10-15, 2020-06-02, 2020-06-03, 2020-06-04, 2020-06-05, 2022-10-02 \\
+        Snowfall & No missing dates \\
+        Sunshine duration & 2020-02-13 \\
+        Wind speed & 2020-03-29, 2021-01-05, 2022-02-11, 2024-02-06 \\
+        \hline
+    \end{tabular}
+    \renewcommand{\arraystretch}{1.0} % I don't know why, but blank line is necessary below
+    
+    *Mean, maximum, or minimum for each meteorological factor had same missing dates
+\end{table}
 
 Missing values in explanatory variable were not acceptable to the model used in this study. Therefore, the missing values were processed before the meteorological data is utilized in the model. The missing values were imputed by the seven-year average value for the same dates with missing data as presented in Formula \ref{formula:impute}, and the imputed results are shown in Fig \ref{fig:impute}. This pre-processing was conducted with software Python 3.11.8 and one of its libraries, Polars 0.20.19.
 
@@ -133,9 +156,10 @@ Missing values in explanatory variable were not acceptable to the model used in 
 
 \section{Model}
 
-\subsection{Bayesian Approach}
-
 \subsection{Space State Model}
+The HRV parameters data is time dependent sequence, therefore, time series approach was adopted in this study. Space state model, one of time series analysis approaches, is ...
+
+\subsection{Bayesian Approach}
 
 \section{Method flow}
 The analysis method in this study follows a figure below.
