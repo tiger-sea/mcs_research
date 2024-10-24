@@ -3,7 +3,7 @@
 \chapter{Introduction}
 
 \section{Background}
-In recent years, various symptoms, such as headache, which are widely believed to be caused by meteorological changes, have been attracting attention and are referred to as meteoropathy. Meteoropathy is considered as a new disease or syndrome [meteoQ] that represents any pathological reactions in some way related to weather conditions, and it could occur to people who have diseases which are sensitive to weather changes and even healthy people. Some people troubling in meteoropathy do not notice they have symptoms related to meteorological factors, hence the symptoms or intensity in individuals are different from person to person, and it is difficult to be diagnosed as meteoropathy.
+In recent years, various symptoms, such as headache, which are widely believed to be caused by meteorological changes, have been attracting attention and are referred to as meteoropathy. Meteoropathy is considered as a new disease or syndrome \cite{meteoQ} that represents any pathological reactions in some way related to weather conditions, and it could occur to people who have diseases which are sensitive to weather changes and even healthy people. Some people troubling in meteoropathy do not notice they have symptoms related to meteorological factors, hence the symptoms or intensity in individuals are different from person to person, and it is difficult to be diagnosed as meteoropathy.
 
 Indeed, according to a survey conducted by a Japanese company Weathernews.inc in 2020 and 2023, considerable number of people reported they are suffering from meteoropathy [weathernews2020, 2023] ???Pi chart???. For example, more than half of the participants in the survey have experienced headache on days with bad weather. Besides this, dizziness, joint pain, and stiff neck are also symptoms which are mainly mentioned by them as shown in Figure \ref{fig:survey}. The number of people who perceived suffering from meteoropathy has been increasing according to the survey. Additionally, a study showed that nearly 30\% of people in the world have experienced symptoms associated with meteoropathy. [meteoropathy:a review]. A few services have launched to provide prediction of the onset of meteoropathy over the past several years [zutool and weathernews] to deal with the symptoms in advance in Japan. Consequently, numerous people are interested in why the symptoms appear and how we can address them in order to maintain a healthy condition.
 
@@ -40,7 +40,7 @@ In many previous papers, the researchers have stated results that patients are a
     \label{table:prior studies}
     \begin{tabular}{l l l l}
         \hline
-        \textbf{Author, Year} & \textbf{Symptom} & \textbf{Effective factor} & \textbf{Data format} \\
+        \textbf{Author, Year} & \textbf{Symptom} & \textbf{Effective factor(s)} & \textbf{Data format} \\
         \hline
         L. Ma et al., 2021 [6] & Respiratory diseases & Temperature, atmospheric pressure, wind speed & Medical record \\ \hline
         Costilla-Esquivel A et al., 2013 [7] & Respiratory diseases & Temperature, humidity, precipitation & Public database \\ \hline
