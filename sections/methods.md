@@ -153,17 +153,19 @@ Missing values in explanatory variable were not acceptable to the model used in 
 \end{figure}
 
 
-
 \section{Model}
 
 \subsection{Space State Model}
-The HRV parameters data is time dependent sequence, therefore, time series approach was adopted in this study. Space state model, one of time series analysis approaches, is ...
+The HRV parameters data was time dependent sequence, therefore, time series approach was adopted in this study. Space state model, one of time series analysis approaches, was utilized to estimate the size of each meteorological factor's effect. In this study, meteorological data which are mentioned earlier was input data as explanatory variables to the model, and each HRV parameter was target data. 
 
 \subsection{Bayesian Approach}
+Recently, data analysis with bayesian approach is getting more popular, because the estimated results are easier to interpret than conventional statistical methods such as p-value. 
 
 \section{Method flow}
 The analysis method in this study follows a figure below.
-make graph
+make graph?
+
+標準化とかも書かないと，そして，標準化したから，xが1標準偏差分変化した時の
 
 
 
