@@ -7,7 +7,7 @@
 % need to change figure properly, figure caption???
 The ECG data utilized in this study was collected in a bathtub environment for special experiment of ECG measurement in the University of Aizu [my paper]. The purpose of this setup was to integrate the experiment into regular daily activities without interfering with them. Daily data collection started from July 2017 to July 2024, covering approximately 7 years in total, though with some missing days. The subject was a healthy adult man whose height is 172 cm, and body weight ranged between 60 and 64 kg, which depends on seasonal condition. In the bathtub environment, bathing condition was typically kept nearly identical conditions, specifically, amount of bath water was about 180 liters, and the temperature was set between 37 and 40 degrees Celsius depending on the season or health condition [my paper].
 
-For ECG measurement, a self made equipment of biosignal measurement unit was adopted to record ECG data by Lead-I\hspace{-1.2pt}I by sampling rate of 500 Hz while the subject was taking bath. There were three electrodes on the bathtub wall, one was located on the bathtub wall close to subject's left leg, and the others were placed on it close to subject's right arm and leg respectively as shown in Figure \ref{fig:bath env}. As mentioned earlier in this section, this measurement method aimed to minimally interferes with normal daily life.
+For ECG measurement, a self made equipment of biosignal measurement unit was adopted to record ECG data by Lead-I\hspace{-1.2pt}I by sampling rate of 500 Hz while the subject was taking a bath. There were three electrodes on the bathtub wall, one was located on the bathtub wall close to subject's left leg, and the others were placed on it close to subject's right arm and leg respectively as shown in Figure \ref{fig:bath env}. As mentioned earlier in this section, this measurement method aimed to minimally interferes with normal daily life.
 
 \begin{figure}[htbp]
     \centering
@@ -261,12 +261,12 @@ MCMC is one of computing methods of high dimensional integral in Bayesian estima
 \begin{equation}
     \label{formula:map}
     \begin{split}
-        \hat{\theta}_{map} &= max_\theta p(\theta|y) \\[8pt]
-                           &= max_\theta \frac{p(y|\theta)p(\theta)}{p(y)}
+        \hat{\theta}_{map} &= argmax_\theta p(\theta|y) \\[8pt]
+                           &= argmax_\theta \frac{p(y|\theta)p(\theta)}{p(y)}
     \end{split}
 \end{equation}
 
-In R and RStan adopted \ac{HMC} method to implement and enhance MCMC sampling, introducing principles from physics. The HMC method applies Hamiltonian dynamics, ********* . chain, burnin, sampling,
+In R and RStan adopted \ac{HMC} method to implement and enhance MCMC sampling, introducing principles from physics. The HMC method applies Hamiltonian dynamics, ********* . chain, burn in, sampling,
 
 The prior distribution of the regression coefficients was specified as a Laplace distribution to encourage sparsity in the coefficients and feature selection. This approach helped to identify the most relevant features by shrinking less impactful coefficients toward zero, enhancing model interpretability [lasso].
 
