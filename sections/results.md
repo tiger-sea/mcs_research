@@ -74,7 +74,7 @@ For HRV parameter SDNN, we detail the estimated coefficients and their implicati
 
 
 \section{RMSSD}
-The outcomes of HRV parameter RMSSD estimations provide insights into sensitivity to meteorological changes. Table \ref{table:RMSSD} shows the MAP estimation values and credible intervals for RMSSD, and the MAP estimation values were generally small in all meteorological factors, with all credible intervals spanning zero, indicating a lack of enough evidence for clear associations. To some extent, minimum sea-level pressure and mean temperature were estimated relatively related to RMSSD compared to the others.
+The outcomes of HRV parameter RMSSD estimations provide insights to meteorological changes. Table \ref{table:RMSSD} shows the MAP estimation values and credible intervals for RMSSD, and the MAP estimation values were generally small in all meteorological factors, with all credible intervals spanning zero, indicating a lack of enough evidence for clear associations. To some extent, minimum sea-level pressure, total precipitation, and mean temperature were estimated relatively larger compared to the others.
 
 \begin{table}[htbp]
     \centering
@@ -102,7 +102,7 @@ The outcomes of HRV parameter RMSSD estimations provide insights into sensitivit
 
 
 \section{pNN50}
-For pNN50, the MAP estimation values were consistently very low, and the credible intervals included zero for all meteorological factors as shown in Table \ref{table:pNN50}. These results imply that any association between pNN50 and meteorological factors is close to zero or remains uncertain for some reasons. However, it might be argued that total precipitation have relatively stronger influence on pNN50, as it had the largest MAP estimation value among the factors.
+For pNN50, the MAP estimation values were consistently very low, and the credible intervals included zero for all meteorological factors as shown in Table \ref{table:pNN50}. These results imply that any association between pNN50 and meteorological factors is close to zero or remains uncertain for some reason. However, it might be argued that total precipitation have relatively stronger influence on pNN50, as it had the largest MAP estimation value among the factors.
 
 \begin{table}[htbp]
     \centering
@@ -167,7 +167,7 @@ Table \ref{table:TINN} presents the MAP estimation values and credible intervals
 \end{table}
 
 \section{VLF}
-For HRV parameter VLF, we describe the estimated coefficients and their relationship in this section. Table \ref{table:VLF} provides the MAP estimation values and credible intervals for VLF, including possibly effective factors with higher MAP estimation values. Additionally, the credible intervals for VLF in several meteorological factors had constant positive/negative impacts including mean sea-level pressure, mean relative humidity, hourly maximum precipitation, mean, minimum, maximum temperature, and mean wind speed.
+For HRV parameter VLF, we describe the estimated coefficients and their relationship in this section. Table \ref{table:VLF} provides the MAP estimation values and credible intervals for VLF, including possibly effective factors with higher MAP estimation values. The credible intervals for VLF in several meteorological factors had constant positive/negative impacts including mean sea-level pressure, mean relative humidity, hourly maximum precipitation, mean, minimum, maximum temperature, and mean wind speed.
 
 \begin{table}[htbp]
     \centering
@@ -278,8 +278,6 @@ Table \ref{table:HF} outlines the MAP estimation values and credible intervals f
 
 \section{LF/HF}
 For HRV parameter LF/HF, the MAP estimation values and credible intervals are shown in Table \ref{table:LFHF}. The MAP estimation values were derived as very low values in all meteorological factors, with the credible intervals including zero, implicitly expressing a insufficient evidence for distinct link between them. Focusing on the credible intervals, some meteorological factors had relatively larger values, such as various temperature measures and mean relative humidity, although the results remain still uncertain.
-
-However, when focusing on the credible intervals, some meteorological factors, such as various temperature measures and mean relative humidity, exhibited relatively wider intervals, indicating potential fluctuation that remain uncertain.
 
 \begin{table}[htbp]
     \centering
