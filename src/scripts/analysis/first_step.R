@@ -44,9 +44,9 @@ original_weather <- df_weather
 df_weather <- as.data.frame(scale(df_weather))
 
 ## Set list of data for stan code ---------------------------------------
-num_pred = 30 # length of prediction data
+num_pred <- 30 # length of prediction data
 T <- nrow(df_weather) - num_pred # length of data for estimation
-y <- df_hrv$HR # dependent variable y
+y <- df_hrv$LFHFratio # dependent variable y
 I <- sum(is.na(y[1:T])) # not include missing values during prediction period
 y[is.na(y[1:T])] <- -1 # nan flag for stan (remain missing values during prediction period)
 
@@ -65,18 +65,18 @@ data_list <- list(
 #        stan code includes seasonality or not?
 #        correct saveRDS file name?
 model <- stan(
-    file = "./mcs_research/src/scripts/analysis/model/first_step.stan",
+    file = "./mcs_research/src/scripts/analysis/model/first_step_season.stan",
     data = data_list,
     seed = 1,
-    iter = 500,
-    warmup = 250,
+    iter = 6000, # 6000
+    warmup = 3500, # 3500
     chains = 4,
     # thin = 4
     # control = c(max_treedepth = 15)
 )
 
 ### Save sampling results (Need to change file name, the results are huge size of file)
-# saveRDS(model, file = "../../model/first_step/LFHF.obj")
+saveRDS(model, file = "../../model/first_step_season/LFHF.obj")
 
 ## Check results --------------------------------------------------------
 mcmc_result <- rstan::extract(model)
@@ -94,7 +94,10 @@ colnames(beta_hist) <- c("beta", "value")
 
 ggplot(beta_hist, aes(x=value)) +
     geom_histogram(bins = 50) +
-    facet_wrap(~beta)
+    facet_wrap(~beta) +
+    ggtitle("Sampling distribution") +
+    xlab("Coefficient size") +
+    ylab("Count")
 
 #### Organize coefficients results
 beta_result <- data.frame(colnames(df_weather),
@@ -102,6 +105,7 @@ beta_result <- data.frame(colnames(df_weather),
 
 colnames(beta_result) <- c("feature", "coef_mean")
 beta_result[order(abs(beta_result$coef_mean), decreasing = TRUE), ]
+beta_result[order(abs(beta_result$coef_mean), decreasing = TRUE)[1:6], ]
 
 #### Store the results of beta mean (Need to change file name)
 # write.csv(beta_result, file = "./mcs_research/src/scripts/analysis/beta_result/SDNN.csv")
@@ -123,16 +127,18 @@ y_filled <- y
 y_filled[y[1:T] == -1] <- apply(mcmc_result$y_mis, MARGIN = 2, mean) # impute pred of missing values
 
 #### Make data frame of y and estimated lower/median/upper range
-df_stan <- make_ci_df(data_array = mcmc_result$alpha, y = y_filled, is_pred = FALSE)
-
-plot_ssm(df_stan, title = "Estimation")
+df_stan <- make_ci_df(data_array = mcmc_result$pred, y = y_filled, is_pred = FALSE)
+imputed_loc <- ifelse((y[1:T] == -1), "imputed", "original")
+plot_ssm(df_stan, title = "Estimation", imputed_loc = imputed_loc)
+p <- plot_ssm(df_stan, title = "Estimation", imputed_loc = imputed_loc)
+plotly::ggplotly(p)
 
 ### Plot prediction result --------------------------------------------------
 df_stan <- make_ci_df(mcmc_result$pred, y=y_filled, is_pred = FALSE) # prediction interval before y_pred
 df_pred <- make_ci_df(mcmc_result$y_pred, y_filled, is_pred = TRUE, T = T, num_pred = num_pred)
 df_all <- bind_rows(df_stan, df_pred) # combine predicted data
 
-plot_pred(df_all, data_list$T_pred, T, focus=TRUE) # plot prediction result
+plot_pred(df_all, data_list$T_pred, T, focus=FALSE) # plot prediction result
 
 mean(mcmc_result$sigma_y)
 
