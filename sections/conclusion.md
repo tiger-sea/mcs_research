@@ -1,5 +1,0 @@
-\chapter{Conclusion}
-
-This study aimed to analyze the relationship between meteorological factors and HRV parameters to identify which factors influence fluctuation in HRV parameters. To the best of our knowledge, this is a unique study which investigated the association between them with such a long-term biosignal data. Despite some limitations, our study's results may provide new perspective on the association between them.
-
-As notable results, some statistics of meteorological factors except for sunshine duration were estimated as relatively more influential factors on certain HRV parameters, exhibiting consistent credible intervals and relatively large MAP estimation values, which may indicate they are related to related to them compared to the other meteorological factors. Particularly, temperature, humidity, precipitation, and wind speed may have effects on more HRV parameters than the other meteorological factors. Among the meteorological factors considered in this study, the results suggested some of them might have an effect on HRV parameters that are related to ANS activities, which could support several previous studies proposals.
