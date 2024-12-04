@@ -26,17 +26,11 @@ parameters {
     real<lower=0> tau; // parameter of prior distribution for beta
 }
 
-transformed parameters {
-    // mu (state) included trend and seasonality
-    vector[T] mu_with_component;
-    for(t in 1:T) {
-        mu_with_component[t] = mu[t];
-    }
-    
+transformed parameters {    
     // regression model
     vector<lower=0>[T] alpha;
     for(t in 1:T) {
-        alpha[t] = mu_with_component[t] + dot_product(features[t, ], beta);
+        alpha[t] = mu[t] + dot_product(features[t, ], beta);
     }
 }
 
@@ -69,18 +63,15 @@ generated quantities {
 
     // prediction part (variables named *_all include prediction period)
     vector[T+T_pred] mu_all;
-    vector[T+T_pred] mu_with_component_all; // mu + seasonality
     vector[T+T_pred] alpha_all; // mu + seasonality and regression
     vector[T_pred] y_pred;
     mu_all[1:T] = mu; // same values within T
-    mu_with_component_all[1:T] = mu_with_component; // same value within T
     alpha_all[1:T] = alpha; // same values within T
     for(t in 1:T_pred) {
         mu_all[T+t] = normal_rng(2*mu_all[T+t-1]-mu_all[T+t-2], sigma_w);
-        mu_with_component_all[T+t] = mu_all[T+t];
 
         // calculate alpha at time T + t
-        alpha_all[T+t] = mu_with_component_all[T+t] + dot_product(features_pred[t, ], beta);
+        alpha_all[T+t] = mu_all[T+t] + dot_product(features_pred[t, ], beta);
 
         // predict y at time T + t using the predicted alpha
         y_pred[t] = normal_rng(alpha_all[T+t], sigma_y);

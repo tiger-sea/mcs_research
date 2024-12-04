@@ -24,29 +24,31 @@ rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
 ## Read both HRV and weather data ---------------------------------------
-df_hrv <- read.csv("./mcs_research/src/data/HRV/hrv.csv")
-df_weather <- read.csv("./mcs_research/src/data/weather/weather_std.csv")
-date <- df_weather$date
-date <- as.Date(date)
+# df_hrv <- read.csv("./mcs_research/src/data/HRV/hrv_inputed.csv") # sonouchi dekiru
+df_hrv <- read.csv("./mcs_research/src/data/HRV/hrv.csv") # 2274 data
+df_weather <- read.csv("./mcs_research/src/data/weather/weather_imputed.csv") # sonouchi tsukau
+df_weather <- read.csv("./mcs_research/src/data/weather/trash/weather_std_date_adjusted.csv") # 2274
+date <- as.Date(df_weather$date)
 
 ### Delete unnecessary columns
 df_weather <- df_weather %>%
                     select(-c("date", "day_of_week", "max_gust",
                               "max_wind_speed", "mean_press",
-                              "mean_vapor", "max_depth"))
+                              "mean_vapor", "max_depth",))
+
 
 ## Set list of data for stan code ---------------------------------------
 num_pred <- 30 # length of prediction data
 T <- nrow(df_weather) - num_pred # length of data for estimation
 y <- df_hrv$TINN # dependent variable y
 data_list <- list(
-    T = T, # data length without last 30 days
+    T = T, # data length without last num_pred days
     D = ncol(df_weather), # the number of features
-    features = t(t(df_weather[1:T, ])), # explanatory variable
+    features = as.matrix(df_weather[1:T, ]), # explanatory variable
     y = y[1:T], # dependent variable
     T_pred = num_pred, # length of prediction
     # explanatory data of prediction
-    features_pred = t(t(df_weather[(T+1):(T+num_pred), ]))
+    features_pred = as.matrix(df_weather[(T+1):(T+num_pred), ])
 )
 
 ## Parameters estimation by stan MCMC -----------------------------------
@@ -130,7 +132,7 @@ df_all <- bind_rows(df_stan, df_pred) # combine predicted data
 
 plot_ssm(df_all)
 
-plot_pred(df_all, data_list$T_pred, T, focus = T) # plot prediction result
+plot_pred(df_all, data_list$T_pred, T, focus = F) # plot prediction result
 
 # check residuals
 # hist(data_list$y - df_stan$fit, breaks = 100)

@@ -16,6 +16,7 @@ library(ggfortify)
 library(gridExtra)
 library(patchwork)
 library(ggplot2)
+library(latex2exp)
 
 ### Utils
 source("./mcs_research/src/scripts/analysis/kkplot.R")
@@ -65,6 +66,7 @@ data_list <- list(
 # check include season or not
 # model <- readRDS("../../model/first_step/HR.obj")
 # model <- readRDS("../../model/first_step_season/VLF.obj")
+# model <- readRDS("../../model/full_period/seasonal/RMSSD.obj")
 model <- readRDS("../../model/full_period/simple/HR.obj")
 
 ## Check results --------------------------------------------------------
@@ -193,18 +195,23 @@ y_filled <- y
 y_filled[y[1:T] == -1] <- apply(mcmc_result$y_mis, MARGIN = 2, mean) # impute pred of missing values
 
 #### Make data frame of y and estimated lower/median/upper range
-df_stan <- make_ci_df(data_array = mcmc_result$pred, y = y_filled, is_pred = FALSE)
+df_stan <- make_ci_df(data_array = mcmc_result$mu, y = y_filled, is_pred = FALSE)
 imputed_loc <- ifelse((y[1:T] == -1), "imputed", "original")
+diff_mu <- df_stan$y - df_stan$fit
 
 plot_ssm(df_stan, title = "", imputed_loc = imputed_loc) +
-    xlab("Date") + ylab("Heart rate (bpm)")
-p <- plot_ssm(df_stan, title = "dfdfd", imputed_loc = imputed_loc) +
-    xlab("Date") + ylab("SDNN (ms)") + theme(plot.title = element_text(hjust = 0.5))
+    xlab("Date") + ylab("TINN (ms)")
+p <- plot_ssm(df_stan, title = "", imputed_loc = imputed_loc) +
+    xlab("Date") + ylab(TeX("Heart rate (ms)")) # + theme(plot.title = element_text(hjust = 0.5))
+# p
 p + ylim(c(60, NaN)) # for HR
-ggsave("./mcs_research/src/fig/analysis/SDNN.png", dpi=1000, width = 8229, height = 4447, units = "px")
-
+# p + ylim(c(NaN, 110)) # for SDNN, RMSSD
+# p + ylim(c(NaN, 1200)) # for LF
+# p + ylim(c(NaN, 1500)) # for HF
+# ggsave("./mcs_research/src/fig/analysis/HF.png", dpi=1000, width = 8229, height = 4447, units = "px")
 
 # plotly::ggplotly(p)
+
 
 ### Plot prediction result --------------------------------------------------
 df_stan <- make_ci_df(mcmc_result$pred, y=y_filled, is_pred = FALSE) # prediction interval before y_pred
@@ -233,4 +240,3 @@ sqrt(sum((df_pred$fit - df_pred$y) ^ 2, na.rm = TRUE) / data_list$T_pred) # RMSE
 
 plot(df_pred$fit - df_pred$y, type="l")
 acf((df_pred$fit - df_pred$y), lag.max = 30, na.action = na.pass)
-

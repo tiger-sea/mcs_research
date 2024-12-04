@@ -1,3 +1,7 @@
+// This baseline stan code is used with
+// explanatory data x without missing values and dependent data y without missing values.
+// Simply, data must not have any missing values, cuz can't deal with them.
+// So, this stan code is just baseline to check the flow.
 data {
     int T; // length of features
     int D; // the number of features

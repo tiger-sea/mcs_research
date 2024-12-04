@@ -7,14 +7,11 @@ data {
     int I; // the number of missing values
     matrix[T, D] features; // explanatory variable x (independent variable)
     vector[T] y; // outcome variable y (dependent variable), with missing values indicated as NaN
-
-    int T_pred; // length of prediction day
-    matrix[T_pred, D] features_pred; // features for prediction
 }
 
 parameters {
     // state space model params
-    vector<lower=0, upper=10000>[T] mu; // state
+    vector<lower=-100, upper=1000>[T] mu; // state
     real<lower=0> sigma_w; // process noise standard deviation
     real<lower=0> sigma_y; // observation noise standard deviation
 
@@ -55,8 +52,8 @@ model {
     }
 
     // state equation
-    // mu[2:T] ~ normal(mu[1:T-1], sigma_w); // 1st trend
-    mu[3:T] ~ normal(2*mu[2:T-1]-mu[1:T-2], sigma_w); // 2nd trend
+    mu[2:T] ~ normal(mu[1:T-1], sigma_w); // 1st trend
+    // mu[3:T] ~ normal(2*mu[2:T-1]-mu[1:T-2], sigma_w); // 2nd trend
 
     // observation equation (for both observed and missing values)
     int miss = 0;
@@ -74,32 +71,6 @@ generated quantities {
     vector[T] log_lik; // for WAIC calculation
     for(t in 1:T) {
         log_lik[t] = normal_lpdf(y[t] | alpha[t], sigma_y);
-    }
-
-    // prediction part (variables named *_all include prediction period)
-    // seasonality
-    vector[T+T_pred] season_all;
-    season_all[1:T] = season; // same values within T
-    for(t in 1:T_pred) {
-        season_all[T+t] = normal_rng(-sum(season_all[(T+t-7):(T+t-1)]), sigma_season);
-    }
-
-    vector[T+T_pred] mu_all;
-    vector[T+T_pred] mu_with_component_all; // mu + seasonality
-    vector[T+T_pred] alpha_all; // mu + seasonality and regression
-    vector[T_pred] y_pred;
-    mu_all[1:T] = mu; // same values within T
-    mu_with_component_all[1:T] = mu_with_component; // same value within T
-    alpha_all[1:T] = alpha; // same values within T
-    for(t in 1:T_pred) {
-        mu_all[T+t] = normal_rng(2*mu_all[T+t-1]-mu_all[T+t-2], sigma_w);
-        mu_with_component_all[T+t] = mu_all[T+t] + season_all[T+t];
-
-        // calculate alpha at time T + t
-        alpha_all[T+t] = mu_with_component_all[T+t] + dot_product(features_pred[t, ], beta);
-
-        // predict y at time T + t using the predicted alpha
-        y_pred[t] = normal_rng(alpha_all[T+t], sigma_y);
     }
     
     // just in case

@@ -1,14 +1,16 @@
-plot_ssm <- function(df, title = "") {
+plot_ssm <- function(df, title = "", imputed_loc) {
     ggplot(data = df, aes(x=time, y=y)) +
-        geom_point(alpha=0.6, size=0.9) +
+        geom_point(aes(color=imputed_loc), alpha=0.6, size=0.9) +
+        scale_color_manual(values = c("imputed" = "red", "original" = "black")) +
         geom_line(aes(y=fit), linewidth=1.2, color="red") +
         geom_ribbon(aes(ymin=lwr, ymax=upr), alpha=0.3) +
         scale_x_date(date_labels = "%Y-%m",
                      date_breaks = "6 month",
-                     limits = as.Date(c("2017-07-01", "2024-07-01"))) +
+                     limits = as.Date(c("2017-07-01", "2024-09-00"))) +
         theme(axis.text.x = element_text(angle = 90, vjust = 0.5),
-              aspect.ratio = 3/10,) +
-        labs(title = paste(title)) # +
+              aspect.ratio = 3/10,
+              legend.position = "none") +
+        labs(title = paste(title)) # + +
         # ylim(c(NA, NA))
 }
 
@@ -35,7 +37,7 @@ plot_pred <- function(df, len_pred, T, focus=TRUE) {
             annotate("text", x=as.Date(df$time[T]+70),y=max(y, na.rm = TRUE), label="Pred") +
             scale_x_date(date_labels = "%Y-%m",
                          date_breaks = "6 month",
-                         limits = as.Date(c("2017-07-01", "2024-07-10"))) +
+                         limits = as.Date(c("2017-07-01", "2024-09-10"))) +
             theme(axis.text.x = element_text(angle = 90, vjust = 0.5),
                   aspect.ratio = 3/10,) +
             labs(title = "Estimated and predicted data")

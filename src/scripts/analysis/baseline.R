@@ -9,7 +9,6 @@ library(loo)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
-
 # read both HRV and weather data
 df_hrv <- read.csv("./mcs_research/src/data/HRV/hrv.csv")
 df_weather <- read.csv("./mcs_research/src/data/weather/weather_std.csv")
@@ -68,7 +67,7 @@ rhat(model, pars = c("b_4"))
 
 # plot estimated results
 model_mu <- t(apply(
-    X = mcmc_sample$mu,
+    X = mcmc_sample$alpha,
     MARGIN = 2,
     FUN = quantile,
     probs=c(0.025, 0.5, 0.975)
