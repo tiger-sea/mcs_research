@@ -27,10 +27,6 @@ Although the previous studies mentioned above focused on certain diseases, there
 
 Furthermore, other than the study carried out by Lee M et al [10], several studies also described that women were easier to perceive weather changes and more severe symptoms, and it is related to onset of meteoropathy [12, 13]. However, Bellini S et al [14] conducted a survey about meteoropathy using METEO-Q with adult outpatients, and they reported that men showed higher level of meteoropathy than women.
 
-% // アンケートとか日記ベースの研究も多くある
-% Also, some studies evaluated relation between health condition and meteorological factors with healthy and sick people utilizing questionnaire or diary based report.
-% ここではとりあえずxxに関する気象の影響を調べている．って言うだけにする？そして，下の方で多くの研究が似たような目的についての調査をしているにもかかわらず，その結果は共通するものもあればコンフリクトがあるものも多い．例えば・・・みたいな流れにするとか．
-
 In many previous papers, the researchers have stated results that patients are affected by weather, but some of those results are not consistent. For example, focusing on atmospheric pressure, some concluded that it had a positive effect, while others suggested it was either not effective or had a negative effect. That would be because of differences in methodology such as data collection conditions. For instance, there are studies that utilized questionnaire-based experiments, however, the details of the questionnaires were different. Summary of the previous studies are shown in Table \ref{table:prior studies}, highlighting these inconsistent findings.
 
 \renewcommand{\arraystretch}{1.4}
