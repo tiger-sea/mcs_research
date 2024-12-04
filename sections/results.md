@@ -200,7 +200,7 @@ For HRV parameter VLF, we describe the estimated coefficients and their relation
 
 
 \section{LF}
-In this section, the estimated values for HRV parameter LF is shown. The MAP estimation values and credible intervals are summarized in Table \ref{table:LF} for LF. The MAP estimation values were small in general, however, the credible intervals were spanning wide range. Additionally, the credible interval of total precipitation was constantly estimated as positive, which could suggest that it had a positive effect on LF.
+In this section, the estimated values for HRV parameter LF are shown. The MAP estimation values and credible intervals are summarized in Table \ref{table:LF} for LF. The MAP estimation values were small in general, however, the credible intervals were spanning wide range. Additionally, the credible interval of total precipitation was constantly estimated as positive, which could suggest that it had a positive effect on LF.
 
 \begin{table}[htbp]
     \centering
