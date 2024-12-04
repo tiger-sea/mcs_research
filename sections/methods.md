@@ -159,7 +159,7 @@ Missing values in explanatory variable were not acceptable to the model used in 
 \section{Model}
 
 \subsection{State Space Model}
-The HRV parameters data were time dependent sequence, therefore, time series approach was adopted in this study. State space model, one of time series analysis approaches, was utilized to estimate the size of each meteorological factor's effect. In this study, standardized ($mean = 0, std = 0$) meteorological data which were mentioned earlier was input data as explanatory variables to the model, and each HRV parameter was target variable. State space model comprises two equations, state equation and observation equation, which are described as follow Formula \ref{formula:ssm} [kitagawa].
+The HRV parameters data were time-dependent sequence, therefore, time series approach was adopted in this study. State space model, one of time series analysis approaches, was utilized to estimate the size of each meteorological factor's effect. In this study, standardized ($mean = 0, std = 0$) meteorological data which were mentioned earlier was input data as explanatory variables to the model, and each HRV parameter was target variable. State space model comprises two equations, state equation and observation equation, which are described as follow Formula \ref{formula:ssm} [kitagawa].
 
 \begin{equation}
     \label{formula:ssm}
