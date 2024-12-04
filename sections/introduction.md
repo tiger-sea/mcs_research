@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 % # Whether the Weather Has Impacts on Daily Heart Rate Variability Over Seven Years
 
 \chapter{Introduction}
@@ -64,5 +63,3 @@ Moreover, a few previous studies suggested that meteoropathy may be linked to th
 Although various studies have sought to understand the causes of meteoropathy, they are still not fully clarified. To our knowledge, few previous studies have conducted an analysis of long-term quantitative data related to \ac{HRV} parameters. Some of HRV parameters closely associated with changes in our health condition are related to the dynamics of the ANS, which has been suggested to be affected by meteorological factors in several studies. In the current study, we examined the association between HRV parameters and meteorological factors in order to assess which meteorological factors have impacts on them, based on \ac{ECG} data as quantitative measures. Additionally, we discussed how we manage the symptoms and explored the future developments in order to contribute to maintaining health.
 
 Achieving these aims would provide valuable insights into which meteorological factors influence HRV parameters' dynamics.
-=======
->>>>>>> dev
