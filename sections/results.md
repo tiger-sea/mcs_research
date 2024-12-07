@@ -4,7 +4,8 @@ In this chapter, we present the estimated coefficients for each HRV parameter. R
 
 
 \section{Heart Rate}
-The estimation results for HRV parameter heart rate are summarized below Table \ref{table:HR}. The MAP estimation values for heart rate in various meteorological factors suggests notable influences of minimum relative humidity, total precipitation, mean temperature, maximum temperature, and mean wind speed. For instance, the credible intervals of those factors indicate consistent positive/negative impacts, with higher estimation values than the others. This findings would suggest that fluctuations in heart rate may be especially sensitive to changes in those factors.
+
+The estimation results for HRV parameter heart rate are summarized below Table \ref{table:HR}. The MAP estimation values for heart rate in various meteorological factors suggests notable influences of mean temperature, maximum temperature, minimum relative humidity, total precipitation, and mean wind speed. For instance, the credible intervals of those factors indicate consistent positive/negative impacts, with higher estimation values than the others. This findings would suggest that fluctuations in heart rate may be especially sensitive to changes in those factors.
 
 \begin{table}[htbp]
     \centering
@@ -38,7 +39,7 @@ The estimation results for HRV parameter heart rate are summarized below Table \
 
 
 \section{SDNN}
-For HRV parameter SDNN, we detail the estimated coefficients and their implications here. As shown in Table \ref{table:SDNN}, the MAP estimation values and its credible intervals for SDNN provide insights into the quantitative effects of meteorological factors. For example, factors such as mean relative humidity, minimum relative humidity, total snowfall, mean, minimum, maximum temperature, and mean wind speed showed consistent positive/negative credible intervals. Particularly, mean temperature and mean wind speed could have stronger effects in SDNN compared to the other factors. 
+For HRV parameter SDNN, we detail the estimated coefficients and their implications here. As shown in Table \ref{table:SDNN}, the MAP estimation values and its credible intervals for SDNN provide insights into the quantitative effects of meteorological factors. For example, factors such as mean, maximum, minimum temperature, mean, minimum relative humidity, total snowfall, and mean wind speed showed consistent positive/negative credible intervals. Particularly, mean temperature and mean relative humidity could have stronger effects in SDNN compared to the other factors. 
 
 \begin{table}[htbp]
     \centering
@@ -72,8 +73,7 @@ For HRV parameter SDNN, we detail the estimated coefficients and their implicati
 
 
 \section{RMSSD}
-The outcomes of HRV parameter RMSSD estimations provide insights to meteorological changes. Table \ref{table:RMSSD} shows the MAP estimation values and credible intervals for RMSSD, and the MAP estimation values were generally small in all meteorological factors, with all credible intervals spanning zero, indicating a lack of enough evidence for clear associations. To some extent, minimum sea-level atmospheric pressure, total precipitation, and mean temperature were estimated relatively larger compared to the others.
-
+The outcomes of HRV parameter RMSSD estimations provide insights to meteorological changes. Table \ref{table:RMSSD} shows the MAP estimation values and credible intervals for RMSSD, and the MAP estimation values were generally small in all meteorological factors, with all credible intervals spanning zero, indicating a lack of enough evidence for clear associations. To some extent, mean temperature, minimum sea-level atmospheric pressure, and total precipitation were estimated relatively larger compared to the others.
 
 \begin{table}[htbp]
     \centering
@@ -139,7 +139,7 @@ For pNN50, the MAP estimation values were consistently very low, and the credibl
 
 
 \section{TINN}
-Table \ref{table:TINN} presents the MAP estimation values and credible intervals for TINN. Similar to pNN50, the MAP estimation values were small, and the credible intervals included zero for all meteorological factors. Whereas, some meteorological factors had relatively larger MAP values and credible intervals, such as minimum sea-level atmospheric pressure, minimum relative humidity, and mean, minimum, maximum temperature. These findings for specific factors may suggest potential associations with TINN, though the credible intervals still spanning zero indicate uncertain results.
+Table \ref{table:TINN} presents the MAP estimation values and credible intervals for TINN. Similar to RMSSD and pNN50, the MAP estimation values were small, and the credible intervals included zero for all meteorological factors. Whereas, some meteorological factors had relatively larger MAP values and credible intervals with biased range, such as mean, maximum temperature, minimum relative humidity, and minimum sea-level atmospheric pressure. These findings for specific factors may suggest potential associations with TINN, though the credible intervals still spanning zero indicate uncertain results.
 
 \begin{table}[htbp]
     \centering
@@ -166,7 +166,7 @@ Table \ref{table:TINN} presents the MAP estimation values and credible intervals
 \end{table}
 
 \section{VLF}
-For HRV parameter VLF, we describe the estimated coefficients and their relationship in this section. Table \ref{table:VLF} provides the MAP estimation values and credible intervals for VLF, including possibly effective factors with higher MAP estimation values. The credible intervals for VLF in several meteorological factors had constant positive/negative impacts including mean sea-level atmospheric pressure, mean relative humidity, hourly maximum precipitation, mean, minimum, maximum temperature, and mean wind speed.
+For HRV parameter VLF, we describe the estimated coefficients and their relationship in this section. Table \ref{table:VLF} provides the MAP estimation values and credible intervals for VLF, including possibly effective factors with higher MAP estimation values. The credible intervals for VLF in several meteorological factors had constant positive/negative impacts including mean, maximum, minimum temperature, mean relative humidity, mean sea-level atmospheric pressure, hourly maximum precipitation, and mean wind speed. Based on the results, those meteorological factors can be considered to have had relatively larger impacts on VLF.
 
 \begin{table}[htbp]
     \centering
@@ -200,7 +200,7 @@ For HRV parameter VLF, we describe the estimated coefficients and their relation
 
 
 \section{LF}
-In this section, the estimated values for HRV parameter LF are shown. The MAP estimation values and credible intervals are summarized in Table \ref{table:LF} for LF. The MAP estimation values were small in general, however, the credible intervals were spanning wide range. Additionally, the credible interval of total precipitation was constantly estimated as positive, which could suggest that it had a positive effect on LF.
+In this section, the estimated values for HRV parameter LF are shown. The MAP estimation values and credible intervals are summarized in Table \ref{table:LF} for LF. The MAP estimation values were small in general, additionally, the credible intervals were spanning wide range and including zero. However, the credible interval of only total precipitation was constantly estimated as positive, which could suggest that it had a positive effect on LF.
 
 \begin{table}[htbp]
     \centering
@@ -238,7 +238,7 @@ In this section, the estimated values for HRV parameter LF are shown. The MAP es
 
 
 \section{HF}
-Table \ref{table:HF} outlines the MAP estimation values and credible intervals for HF. Similar to LF, the MAP estimation values were generally low, and the credible interval of total precipitation was constantly positive. However, in contrast to LF, the credible intervals of most meteorological factors were narrower than the results for LF. It could imply that uncertainty of the estimation for HF was relatively less than LF, suggesting the effects of meteorological factors on HF might be lower compared to the their effects on LF.
+Table \ref{table:HF} outlines the MAP estimation values and credible intervals for HF. Similar to LF, the MAP estimation values were generally low with credible intervals including zero, and the credible interval of only total precipitation was constantly positive. The consistency of meteorological factors with significant impacts might be reasonable, as LF and HF belong to the same frequency domain of HRV parameters.
 
 \begin{table}[htbp]
     \centering
