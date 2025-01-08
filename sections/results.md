@@ -1,14 +1,14 @@
 \chapter{Results}
 
-In this chapter, we present the estimated coefficients for each HRV parameter. Results are organized by parameter to highlight. Each section provides a detailed analysis of the effects of meteorological factors on HRV parameters based on the estimated coefficients. Tables in each section include MAP estimation values and 50\% credible intervals of estimated distribution.
+In this chapter, we present the estimated coefficients for each HRV parameter. Results are organized by parameter to highlight. Each section provides a detailed analysis of the effects of meteorological factors on HRV parameters based on the estimated coefficients. Besides, the improvement rate in RMSE between the primary model and the simplified model is reported to validate the estimated model and its parameters. Tables in each section include MAP estimation values and 50\% credible intervals of estimated distribution.
 
 
 \section{Heart Rate}
-
-The estimation results for HRV parameter heart rate are summarized below Table \ref{table:HR}. The MAP estimation values for heart rate in various meteorological factors suggests notable influences of mean temperature, maximum temperature, minimum relative humidity, total precipitation, and mean wind speed. For instance, the credible intervals of those factors indicate consistent positive/negative impacts, with higher estimation values than the others. This findings would suggest that fluctuations in heart rate may be especially sensitive to changes in those factors.
+The estimation results for HRV parameter "heart rate" are summarized in Table \ref{table:HR}. The MAP estimation values for heart rate in various meteorological factors suggest notable influences of mean temperature, maximum temperature, minimum relative humidity, total precipitation, and mean wind speed. For instance, the credible intervals of those factors indicate consistent positive/negative impacts, with higher estimation values than the others. These findings would suggest that fluctuations in heart rate may be especially sensitive to changes in those factors. Additionally, the RMSE for the primary model was 6.01 bpm, while for the simplified model it was 7.65 bpm, resulting in an improvement rate of 21.4\%. This indicates that the inclusion of meteorological factors significantly improved the model's predictive accuracy, further supporting the notion that heart rate is influenced by changes in weather conditions.
 
 \begin{table}[htbp]
     \centering
+    \caption{MAP of estimated coefficients distribution for heart rate}
     \begin{tabular}{l c}
         \hline
         \textbf{Meteorological factor} & \textbf{MAP (50\% CI)} \\
@@ -27,7 +27,6 @@ The estimation results for HRV parameter heart rate are summarized below Table \
         Mean wind speed & -0.4270 (-0.5290, -0.3247) \\
         \hline
     \end{tabular}
-    \caption{MAP of estimated coefficients distribution for Heart rate}
     \label{table:HR}
     % > mean(mcmc_result$sigma_w)
     % [1] 0.07395926
@@ -39,10 +38,11 @@ The estimation results for HRV parameter heart rate are summarized below Table \
 
 
 \section{SDNN}
-For HRV parameter SDNN, we detail the estimated coefficients and their implications here. As shown in Table \ref{table:SDNN}, the MAP estimation values and its credible intervals for SDNN provide insights into the quantitative effects of meteorological factors. For example, factors such as mean, maximum, minimum temperature, mean, minimum relative humidity, total snowfall, and mean wind speed showed consistent positive/negative credible intervals. Particularly, mean temperature and mean relative humidity could have stronger effects in SDNN compared to the other factors. 
+For HRV parameter SDNN, we detail the estimated coefficients and their implications here. As shown in Table \ref{table:SDNN}, the MAP estimation values and its credible intervals for SDNN provide insights into the quantitative effects of meteorological factors. For example, factors such as mean, maximum, minimum temperature, mean, minimum relative humidity, total snowfall, and mean wind speed showed consistent positive/negative credible intervals. Particularly, mean temperature and mean relative humidity could have stronger effects in SDNN compared to the other factors. Furthermore, the RMSE for primary model and simplified model were 16.14 ms and 18.24 ms respectively, resulting in an improvement rate of 11.5\%. This improvement would suggest that meteorological factors were related to the fluctuation in SDNN, although the degree of improvement was not drastically.
 
 \begin{table}[htbp]
     \centering
+    \caption{MAP of estimated coefficients distribution for SDNN}
     \begin{tabular}{l c}
         \hline
         \textbf{Meteorological factor} & \textbf{MAP (50\% CI)} \\
@@ -61,7 +61,6 @@ For HRV parameter SDNN, we detail the estimated coefficients and their implicati
         Mean wind speed & 0.5629 (0.3540, 0.7542) \\
         \hline
     \end{tabular}
-    \caption{MAP of estimated coefficients distribution for SDNN}
     \label{table:SDNN}
     % > mean(mcmc_result$sigma_w)
     % [1] 0.02043965
@@ -73,10 +72,11 @@ For HRV parameter SDNN, we detail the estimated coefficients and their implicati
 
 
 \section{RMSSD}
-The outcomes of HRV parameter RMSSD estimations provide insights to meteorological changes. Table \ref{table:RMSSD} shows the MAP estimation values and credible intervals for RMSSD, and the MAP estimation values were generally small in all meteorological factors, with all credible intervals spanning zero, indicating a lack of enough evidence for clear associations. To some extent, mean temperature, minimum sea-level atmospheric pressure, and total precipitation were estimated relatively larger compared to the others.
+The outcomes of HRV parameter RMSSD estimations provide insights into the effects of meteorological changes. Table \ref{table:RMSSD} shows the MAP estimation values and credible intervals for RMSSD, and the MAP estimation values were generally small in all meteorological factors, with all credible intervals spanning zero, indicating a lack of enough evidence for clear associations. To some extent, mean temperature, minimum sea-level atmospheric pressure, and total precipitation were estimated relatively larger compared to the others. Moreover, the RMSE was 14.56 ms for primary model and 15.45 ms for simplified model, resulting in an improvement rate of 5.7\%. This outcome may indicate that RMSSD was slightly associated with meteorological factors, although the estimated parameters lacked confidence.
 
 \begin{table}[htbp]
     \centering
+    \caption{MAP of estimated coefficients distribution for RMSSD}
     \begin{tabular}{l c}
         \hline
         \textbf{Meteorological factor} & \textbf{MAP (50\% CI)} \\
@@ -95,16 +95,16 @@ The outcomes of HRV parameter RMSSD estimations provide insights to meteorologic
         Mean wind speed & -0.0004 (-0.0403, 0.0642) \\
         \hline
     \end{tabular}
-    \caption{MAP of estimated coefficients distribution for RMSSD}
     \label{table:RMSSD}
 \end{table}
 
 
 \section{pNN50}
-For pNN50, the MAP estimation values were consistently very low, and the credible intervals included zero for all meteorological factors as shown in Table \ref{table:pNN50}. These results imply that any association between pNN50 and meteorological factors is close to zero or remains uncertain for some reason. However, it might be argued that total precipitation have relatively stronger influence on pNN50, as it had the largest MAP estimation value among the factors.
+For pNN50, the MAP estimation values were consistently very low, and the credible intervals included zero for all meteorological factors as shown in Table \ref{table:pNN50}. These results imply that any association between pNN50 and meteorological factors is close to zero or remains uncertain for some reason. However, it might be argued that total precipitation have relatively stronger influence on pNN50, as it had the largest MAP estimation value among the factors. Furthermore, the RMSE for the primary model was 3.09\%, while for the simplified model it was 3.11\%, resulting in an improvement rate of 0.6\%. Given these results, it may be difficult to assert that reliable estimates were obtained for pNN50.
 
 \begin{table}[htbp]
     \centering
+    \caption{MAP of estimated coefficients distribution for pNN50}
     \begin{tabular}{l c}
         \hline
         \textbf{Meteorological factor} & \textbf{MAP (50\% CI)} \\
@@ -123,7 +123,6 @@ For pNN50, the MAP estimation values were consistently very low, and the credibl
         Mean wind speed & 0.00028 (-0.0123, 0.0052) \\
         \hline
     \end{tabular}
-    \caption{MAP of estimated coefficients distribution for pNN50}
     \label{table:pNN50}
     % > mean(mcmc_result$sigma_w)
     % [1] 0.002956826
@@ -139,10 +138,11 @@ For pNN50, the MAP estimation values were consistently very low, and the credibl
 
 
 \section{TINN}
-Table \ref{table:TINN} presents the MAP estimation values and credible intervals for TINN. Similar to RMSSD and pNN50, the MAP estimation values were small, and the credible intervals included zero for all meteorological factors. Whereas, some meteorological factors had relatively larger MAP values and credible intervals with biased range, such as mean, maximum temperature, minimum relative humidity, and minimum sea-level atmospheric pressure. These findings for specific factors may suggest potential associations with TINN, though the credible intervals still spanning zero indicate uncertain results.
+Table \ref{table:TINN} presents the MAP estimation values and credible intervals for TINN. Similar to RMSSD and pNN50, the MAP estimation values were small, and the credible intervals included zero for all meteorological factors. Whereas, some meteorological factors had relatively larger MAP values and credible intervals with biased range, such as mean, maximum temperature, minimum relative humidity, and minimum sea-level atmospheric pressure. These findings for specific factors may suggest potential associations with TINN, though the credible intervals still spanning zero indicate uncertain results. Additionally, the RMSE were 78.61 ms for primary model and 84.13 ms for simplified model, showing a 6.5\% improvement. While the estimated results provide lack evidence, this slight improvement might suggest some degree of association between TINN and meteorological factors.
 
 \begin{table}[htbp]
     \centering
+    \caption{MAP of estimated coefficients distribution for TINN}
     \begin{tabular}{l c}
         \hline
         \textbf{Meteorological factor} & \textbf{MAP (50\% CI)} \\
@@ -161,15 +161,15 @@ Table \ref{table:TINN} presents the MAP estimation values and credible intervals
         Mean wind speed & 0.0009 (-0.2482, 0.4976) \\
         \hline
     \end{tabular}
-    \caption{MAP of estimated coefficients distribution for TINN}
     \label{table:TINN}
 \end{table}
 
 \section{VLF}
-For HRV parameter VLF, we describe the estimated coefficients and their relationship in this section. Table \ref{table:VLF} provides the MAP estimation values and credible intervals for VLF, including possibly effective factors with higher MAP estimation values. The credible intervals for VLF in several meteorological factors had constant positive/negative impacts including mean, maximum, minimum temperature, mean relative humidity, mean sea-level atmospheric pressure, hourly maximum precipitation, and mean wind speed. Based on the results, those meteorological factors can be considered to have had relatively larger impacts on VLF.
+For HRV parameter VLF, we describe the estimated coefficients and their relationship in this section. Table \ref{table:VLF} provides the MAP estimation values and credible intervals for VLF, including possibly effective factors with higher MAP estimation values. The credible intervals for VLF in several meteorological factors had constant positive/negative impacts including mean, maximum, minimum temperature, mean relative humidity, mean sea-level atmospheric pressure, hourly maximum precipitation, and mean wind speed. Based on the results, those meteorological factors can be considered to have had relatively larger impacts on VLF. Besides, the RMSE for primary model and simplified model were 458.77 $ms^2$, 446.74 $ms^2$ respectively, resulting in an improvement rate of 2.6\%. This result may indicate that VLF was associated with meteorological factors, although the degree of improvement was not large.
 
 \begin{table}[htbp]
     \centering
+    \caption{MAP of estimated coefficients distribution for VLF}
     \begin{tabular}{l c}
         \hline
         \textbf{Meteorological factor} & \textbf{MAP (50\% CI)} \\
@@ -188,7 +188,6 @@ For HRV parameter VLF, we describe the estimated coefficients and their relation
         Mean wind speed & 0.89891 (0.5911, 8.5995) \\
         \hline
     \end{tabular}
-    \caption{MAP of estimated coefficients distribution for VLF}
     \label{table:VLF}
     % > mean(mcmc_result$sigma_w)
     % [1] 0.3306483
@@ -200,10 +199,11 @@ For HRV parameter VLF, we describe the estimated coefficients and their relation
 
 
 \section{LF}
-In this section, the estimated values for HRV parameter LF are shown. The MAP estimation values and credible intervals are summarized in Table \ref{table:LF} for LF. The MAP estimation values were small in general, additionally, the credible intervals were spanning wide range and including zero. However, the credible interval of only total precipitation was constantly estimated as positive, which could suggest that it had a positive effect on LF.
+In this section, the estimated values for HRV parameter LF are shown. The MAP estimation values and credible intervals are summarized in Table \ref{table:LF} for LF. The MAP estimation values were small in general, additionally, the credible intervals were spanning wide range and including zero. However, the credible interval of only total precipitation was constantly estimated as positive, which could suggest that it had a positive effect on LF. Moreover, the RMSE were 439.2 $ms^2$ for primary model and 441.62 $ms^2$ for simplified model, showing 0.5\% improvement. Similar to pNN50, it may be difficult to argue that reliable estimates were obtained for LF.
 
 \begin{table}[htbp]
     \centering
+    \caption{MAP of estimated coefficients distribution for LF}
     \begin{tabular}{l c}
         \hline
         \textbf{Meteorological factor} & \textbf{MAP (50\% CI)} \\
@@ -222,7 +222,6 @@ In this section, the estimated values for HRV parameter LF are shown. The MAP es
         Mean wind speed & 0.0206 (-0.1305, 1.3662) \\
         \hline
     \end{tabular}
-    \caption{MAP of estimated coefficients distribution for LF}
     \label{table:LF}
     % > mean(mcmc_result$sigma_w)
     % [1] 0.1929948
@@ -238,10 +237,11 @@ In this section, the estimated values for HRV parameter LF are shown. The MAP es
 
 
 \section{HF}
-Table \ref{table:HF} outlines the MAP estimation values and credible intervals for HF. Similar to LF, the MAP estimation values were generally low with credible intervals including zero, and the credible interval of only total precipitation was constantly positive. The consistency of meteorological factors with significant impacts might be reasonable, as LF and HF belong to the same frequency domain of HRV parameters.
+Table \ref{table:HF} outlines the MAP estimation values and credible intervals for HF. Similar to LF, the MAP estimation values were generally low with credible intervals including zero, and the credible interval of only total precipitation was constantly positive. The consistency of meteorological factors with significant impacts might be reasonable, as LF and HF belong to the same frequency domain of HRV parameters. In terms of RMSE, it was 258.98 $ms^2$ for primary model and 262.33 $ms^2$ for simplified model, resulting in an improvement rate of 1.3\%. This result might suggest that LF was related to meteorological factors, although the improvement rate was not drastically.
 
 \begin{table}[htbp]
     \centering
+    \caption{MAP of estimated coefficients distribution for HF}
     \begin{tabular}{l c}
         \hline
         \textbf{Meteorological factor} & \textbf{MAP (50\% CI)} \\
@@ -260,7 +260,6 @@ Table \ref{table:HF} outlines the MAP estimation values and credible intervals f
         Mean wind speed & 0.0047 (-0.9862, 0.5763) \\
         \hline
     \end{tabular}
-    \caption{MAP of estimated coefficients distribution for HF}
     \label{table:HF}
     % > mean(mcmc_result$sigma_w)
     % [1] 0.254838
@@ -277,10 +276,11 @@ Table \ref{table:HF} outlines the MAP estimation values and credible intervals f
 
 \newpage % maybe
 \section{LF/HF}
-For HRV parameter LF/HF, the MAP estimation values and credible intervals are shown in Table \ref{table:LFHF}. The MAP estimation values were derived as very low values in all meteorological factors, with the credible intervals including zero, implicitly expressing a insufficient evidence for distinct link between them. Focusing on the credible intervals, some meteorological factors had relatively larger values, such as various temperature measures and mean relative humidity, although the results remain still uncertain.
+For HRV parameter LF/HF, the MAP estimation values and credible intervals are shown in Table \ref{table:LFHF}. The MAP estimation values were derived as very low values in all meteorological factors, with the credible intervals including zero, implicitly expressing a insufficient evidence for distinct link between them. Focusing on the credible intervals, some meteorological factors had relatively larger values, such as various temperature measures and mean relative humidity, although the results remain still uncertain. Furthermore, the RMSE for the primary model and simplified model were 130.71\% and 132.74\% respectively, resulting in an improvement rate of 1.5\%. Similar to HF, this result might suggest that LF/HF was associated with meteorological factors, although the improvement rate was not large.
 
 \begin{table}[htbp]
     \centering
+    \caption{MAP of estimated coefficients distribution for LF/HF}
     \begin{tabular}{l c}
         \hline
         \textbf{Meteorological factor} & \textbf{MAP (50\% CI)} \\
@@ -299,7 +299,6 @@ For HRV parameter LF/HF, the MAP estimation values and credible intervals are sh
         Mean wind speed & 0.0009 (-0.1115, 0.9800) \\
         \hline
     \end{tabular}
-    \caption{MAP of estimated coefficients distribution for LF/HF}
     \label{table:LFHF}
     % > mean(mcmc_result$sigma_w)
     % [1] 0.09058886
@@ -312,5 +311,4 @@ For HRV parameter LF/HF, the MAP estimation values and credible intervals are sh
     % beta[12]  sigma_w  sigma_y      tau 
     % 1.043007 1.954085 1.055189 1.866230 
 \end{table}
-
 

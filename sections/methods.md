@@ -1,5 +1,33 @@
 \chapter{Methods}
 
+\section{Analysis Flow}
+The analysis process consists of four main sections, each addressing a specific purpose of the study. Within these sections, more detailed descriptions are provided through relevant subsections, including ECG data collection, meteorological data collection, HRV parameters calculation, missing values imputation of meteorological data, model construction, model estimation, and model evaluation. The overall flow of the analysis process is illustrated in Figure\ref{fig:flowchart}. The flowchart highlights the major steps of the process, focusing on the main tasks required for data processing, modeling, and evaluation. Some further information involving model construction are provided in the corresponding subsections.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[node distance=2.5cm, >=Stealth]
+        \tikzstyle{mynode} = [draw, rectangle, rounded corners, minimum width=6.5cm, minimum height=1.2cm, font=\large]
+    
+        \node (1) [mynode] {Meteorological data collection};
+        \node (2) [mynode, below of=1] {Missing values imputation};
+        \node (3) [mynode, right=of 1] {ECG data collection};
+        \node (4) [mynode, below of=3] {HRV parameters calculation};
+        \node (5) [mynode, below=of 2] at ($(2)!0.5!(4)$) {Model construction};
+        \node (6) [mynode, below of=5] {Model estimation};
+        \node (7) [mynode, below of=6] {Model evaluation};
+    
+        \draw[->, thick] (1) -- (2);
+        \draw[->, thick] (3) -- (4);
+        \draw[->, thick] (2) -- (5);
+        \draw[->, thick] (4) -- (5);
+        \draw[->, thick] (5) -- (6);
+        \draw[->, thick] (6) -- (7);
+    \end{tikzpicture}
+    \caption{Flowchart of main analysis process}
+    \label{fig:flowchart}
+\end{figure}
+
+
 \section{Data Collection}
 
 \subsection{ECG Data}
@@ -19,9 +47,9 @@ For ECG measurement, a self made equipment of biosignal measurement unit was ado
 \subsection{Meteorological Factors}
 % good but not checked
 % insert figure of weather data? -> weather figure is at imputation part
-Daily meteorological data corresponding to the ECG data were gathered from the Japan Meteorological Agency's database \cite{database}. The location of monitoring point by the Japan Meteorological Agency was Aizu-Wakamatsu city, Fukushima, Japan \cite{address}. Aizu-Wakamatsu city is surrounded by mountain, and that yields many heavy snowy and cold days in winter, which similar to Japan Sea area. Besides, a large number of high temperature and humid days happen in summer, lasting high temperature until late night because of the location. In spring and autumn, a difference of temperature between daytime and nighttime is relatively considerable caused by inland climate feature\if0[pdf and pdf]\fi.
+Daily meteorological data in corresponding days of the ECG data collection were gathered from the Japan Meteorological Agency's database \cite{database}. The location of monitoring point by the Japan Meteorological Agency was Aizu-Wakamatsu city, Fukushima, Japan \cite{address}. Aizu-Wakamatsu city is surrounded by mountain, and that yields many heavy snowy and cold days in winter, which similar to Japan Sea area. Besides, a large number of high temperature and humid days happen in summer, lasting high temperature until late night because of the location. In spring and autumn, a difference of temperature between daytime and nighttime is relatively considerable caused by inland climate feature\if0[pdf and pdf]\fi.
 
-In this study, 12 meteorological factors were collected, and which include maximum, minimum, or mean representative values for each meteorological factor as shown below Table \ref{table:weather factors}. According to the statistical guideline of the Japan Meteorological Agency's database, calculation protocols for the representative values are defined as follows \cite{weather_stats}. The daily mean values of temperature, relative humidity, and sea-level atmospheric pressure are recorded every hour on the hour. Similarly, total precipitation, total snowfall, and sunshine duration values are collected following the same protocol. In addition to that, the daily maximum or minimum representative values of temperature, relative humidity, sea-level atmospheric pressure, and hourly precipitation are gathered every 10 minutes, as well as the mean wind speed.
+In this study, 12 meteorological factors were collected, and which include maximum, minimum, or mean representative values for each meteorological factor as shown below Table \ref{table:weather factors}. According to the statistical guideline of the Japan Meteorological Agency's database, calculation protocols for the representative values are defined as follows \cite{weather_stats}. The daily mean values of temperature, relative humidity, and sea-level atmospheric pressure are recorded every hour. Similarly, total precipitation, total snowfall, and sunshine duration values are collected following the same protocol. In addition to that, the daily maximum or minimum representative values of temperature, relative humidity, sea-level atmospheric pressure, and hourly precipitation are gathered every 10 minutes, as well as the mean wind speed.
 
 \begin{table}[htbp]
     \centering
@@ -95,7 +123,7 @@ HRV parameters derived from ECG data were calculated using software MATLAB R2023
 \begin{figure}
     \centering
     \includegraphics[scale=1]{./Figure/figure/ecg_preprocess.png}
-    \caption{Flow of R peaks detection for R-R interval calculation}
+    \caption{Flow of R peaks detection and R-R interval calculation}
     \label{fig:ecg}
 \end{figure}
 
@@ -253,47 +281,27 @@ In this study, model estimation was conducted using Bayesian approach to obtain 
 
 where $p(y|\theta)$ denotes the likelihood, describing the probability of the data $y$ under a specific parameter $\theta$; $p(\theta)$ represents the prior distribution, which holds prior knowledge or assumption about $\theta$; and $p(y)$ is the marginal likelihood which is constant value as normalization term. To obtain the posterior distribution, it is necessary to compute $p(y)$ by integrating over all possible values of $\theta$. This integration would span a high dimensional parameter space, leading to a multiple dimension integral which is computationally impassible to solve analytically.
 
-MCMC is one of computing methods of high dimensional integral in Bayesian estimation, providing a solution by approximating the posterior distribution. Rather than directly computing the integral, MCMC methods generate a large number of random samples from the posterior distribution by utilizing Markov chain. This sampling approach enables us to estimate representative values from the posterior distribution, such as mean, median, and credible intervals.
+To understand the characteristics of estimated posterior distribution, it is necessary to obtain a representative value. One of the representative values is \ac{MAP} described as \ref{formula:map}, where b corresponds to each regression coefficient of meteorological factor data explained above, and y represents meteorological factors used in this study. Applying to the estimated posterior distribution of each b generate the MAP estimation value for the b. In this study, the MAP estimation values were primarily focused on to discuss and interpret the results. 
 
 \begin{equation}
     \label{formula:map}
     \begin{split}
-        \hat{\theta}_{map} &= argmax_\theta p(\theta|y) \\[8pt]
-                           &= argmax_\theta \frac{p(y|\theta)p(\theta)}{p(y)}
+        \hat{b}_{map} &= argmax_b p(b|y) \\[8pt]
+                      &= argmax_b \frac{p(y|b)p(b)}{p(y)}
     \end{split}
 \end{equation}
+
+MCMC is one of computing methods of high dimensional integral in Bayesian estimation, providing a solution by approximating the posterior distribution. Rather than directly computing the integral, MCMC methods generate a large number of random samples from the posterior distribution by utilizing Markov chain. This sampling approach enables us to estimate representative values from the posterior distribution, such as mean, median, and credible intervals.
 
 The prior distribution of the regression coefficients was specified as a Laplace distribution to encourage sparsity in the coefficients and feature selection. This approach helped to identify the most relevant features by shrinking less impactful coefficients toward zero, enhancing model interpretability \cite{Ibuki_2013}.
 
 In recent years, analysis methods focusing on interpretability and explanability have been attracting attention. These analysis methods, state space model with bayesian approach, would be advanced as the point of view of interpretable model construction compared to deep neural network which has millions of parameters. 
 
+\section{Model Evaluation}
+To assess the validity of the estimated models for each HRV parameter, we compared them with a simplified model. Specifically, the simplified model excluded regression term of meteorological factors but maintained the same structure as the primary model. We then evaluated the improvement by comparing the \ac{RMSE} of the 30-day predictions from both models. This approach allowed us to determine whether including meteorological factors contributed to better predictive performance and provide reasonable model estimation of their effects.
 
-\section{Method flow}
-The analysis part consisted of 7 components for several purposes which were explained above; meteorological data collection, ECG measurement, missing values imputation of meteorological data, HRV parameters calculation, model construction, model estimation, and results evaluation. The flow of them are shown in Figure \ref{fig:flowchart}.
+For model evaluation, we ensured that the 30-day prediction data were completely excluded from the estimation process and used solely for validation purposes.
 
-\begin{figure}[htbp]
-    \centering
-    \begin{tikzpicture}[node distance=2.5cm, >=Stealth]
-        \tikzstyle{mynode} = [draw, rectangle, rounded corners, minimum width=6.5cm, minimum height=1.2cm, font=\large]
-    
-        \node (1) [mynode] {Meteorological data collection};
-        \node (2) [mynode, below of=1] {Missing values imputation};
-        \node (3) [mynode, right=of 1] {ECG measurement};
-        \node (4) [mynode, below of=3] {HRV parameters calculation};
-        \node (5) [mynode, below=of 2] at ($(2)!0.5!(4)$) {Model construction};
-        \node (6) [mynode, below of=5] {Model estimation};
-        \node (7) [mynode, below of=6] {Results evaluation};
-    
-        \draw[->, thick] (1) -- (2);
-        \draw[->, thick] (3) -- (4);
-        \draw[->, thick] (2) -- (5);
-        \draw[->, thick] (4) -- (5);
-        \draw[->, thick] (5) -- (6);
-        \draw[->, thick] (6) -- (7);
-    \end{tikzpicture}
-    \caption{Analysis flowchart}
-    \label{fig:flowchart}
-\end{figure}
 
 % \centering
 % \smartdiagramset{
