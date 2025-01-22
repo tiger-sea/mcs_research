@@ -1,4 +1,4 @@
-\chapter{Introduction}
+\ chaptec{Introduction}
 
 \section{Background}
 In recent years, various symptoms, such as headache, which are widely believed to be caused by meteorological changes, have been attracting attention and are referred to as meteoropathy. Meteoropathy is considered as a new disease or syndrome \cite{meteoQ} that represents any pathological reactions in some way related to weather conditions, and it could occur to people who have diseases which are sensitive to weather changes and even healthy people. Some people troubling in meteoropathy do not notice they have symptoms related to meteorological factors, hence the symptoms or intensity in individuals are different from person to person, and it is difficult to be diagnosed as meteoropathy.
@@ -11,11 +11,11 @@ In terms of health monitoring to maintain a healthy condition and understand the
 \begin{figure}[htbp]
     \centering
     \includegraphics[scale=0.7]{./Figure/figure/survey.png}
-    \caption{Percentage of the survey "What is your biggest symptom?" conducted in 2020 \cite{wni_2020}}
+    \caption{Percentage of reported symptoms in the survey "What is your biggest symptom?" conducted in 2020 \cite{wni_2020}}
     \label{fig:survey}
 \end{figure}
 
-\vspace{1.5cm} % for line space
+\vspace{1.2cm} % for line space
 
 \section{Previous Studies}
 
@@ -33,13 +33,13 @@ Although the previous studies mentioned above focused on certain diseases, there
 
 Furthermore, other than the study carried out by Lee et al \cite{Lee_2018}, several studies also described that women were easier to perceive weather changes and more severe symptoms, and it is related to onset of meteoropathy \cite{Oniszczenko_2020, Rzeszutek_2020}. However, Bellini et al. \cite{Bellini_2015} conducted a survey about meteoropathy using METEO-Q with adult outpatients, and they reported that men showed higher level of meteoropathy than women.
 
-\subsection{Limitations of Qualitative Approaches in Previous Studies}
-In many previous papers, the researchers have stated results that patients are affected by weather, but some of those results are not consistent. For example, focusing on atmospheric pressure, some concluded that it had a positive effect, while others suggested it was either not effective or had a negative effect. That would be because of differences in methodology such as data collection conditions. For instance, there are studies that utilized questionnaire-based experiments, however, the details of the questionnaires were different. Specifically, the contents of the questionnaires differed. Macfarlane et al. focused solely on the existence of pain, while others included questions addressing pain level, tense, and so on related to pain. Furthermore, although the METEO-Q has been proposed as a tool to assess meteoropathy, its use remains limited. This is partly because many studies have focused on specific diseases such as diseases mentioned above, making it difficult to apply METEO-Q generally. These inconsistencies in data collection and measurement methods may have contributed to the difficulties in comparing results across studies. Summary of the previous studies are shown in Table \ref{table:prior studies}, highlighting these inconsistent findings.
+\subsection{Limitations of Subjective Approaches in Previous Studies}
+In many previous papers, the researchers have stated results that patients are affected by weather, but some of those results are not consistent. For example, focusing on atmospheric pressure, some concluded that it had a positive effect, while others suggested it was either not effective or had a negative effect. That would be because of differences in methodology such as data collection conditions. For instance, there are studies that utilized questionnaire-based experiments, however, the details of the questionnaires were different. Specifically, the contents of the questionnaires differed. Macfarlane et al. focused solely on the existence of pain, while others included questions addressing pain level, tense, and so on related to pain \cite{Macfarlane_2010}. Furthermore, although the METEO-Q has been proposed as a tool to assess meteoropathy, its use remains limited. This is partly because many studies have focused on specific diseases such as diseases mentioned above, making it difficult to apply METEO-Q generally. These inconsistencies in data collection and measurement methods may have contributed to the difficulties in comparing results across studies. Summary of the previous studies are shown in Table \ref{table:prior studies}, highlighting these inconsistent findings.
 
 \renewcommand{\arraystretch}{1.4}
 \begin{sidewaystable}[htbp]
     \centering
-    \caption{Summary of previous studies introduced the section}
+    \caption{Summary of the previous studies}
     \label{table:prior studies}
     \begin{tabular}{l l l l}
         \hline
@@ -48,16 +48,20 @@ In many previous papers, the researchers have stated results that patients are a
         L. Ma et al., 2021 \cite{L_2020} & Respiratory diseases & Temperature, atmospheric pressure, wind speed & Medical record \\ \hline
         A. Costilla-Esquivel et al., 2013 \cite{Costilla_2014} & Respiratory diseases & Temperature, humidity, precipitation & Public database \\ \hline
         Azzouzi \& Ichchou, 2020 \cite{Hamida_2020} & Rheumatoid Arthritis & Temperature, atmospheric pressure & Medical record \\ \hline
-        Fagerlund A.J. et al., 2019 \cite{Fagerlund_2019} & Fibromyalgia & Relative humidity, atmospheric pressure & Questionnaire  \\ \hline
-        Macfarlane et al., 2010 \cite{Macfarlane_2010} & Pain & Temperature, sunshine duration & Questionnaire \\ \hline
+        Fagerlund A.J. et al., 2019 \cite{Fagerlund_2019} & Fibromyalgia & Relative humidity, atmospheric pressure & Original questionnaire  \\ \hline
+        Macfarlane et al., 2010 \cite{Macfarlane_2010} & Pain & Temperature, sunshine duration & Original questionnaire \\ \hline
         Lee et al., 2018 \cite{Lee_2018} & Fatigue & Temperature, relative humidity & Daily diary \\ \hline
         Lickiewicz et al., 2020 \cite{Lickiewicz_2020} & Aggressive emotion & Temperature, atmospheric pressure & Medical record \\ \hline
-        Mazza et al. 2012 \cite{meteoQ} & Meteoropathy & Sex (Women) & Questionnaire (METEO-Q) \\ \hline
-        Oniszczenko, 2020 \cite{Oniszczenko_2020} & Affective temperaments & Sex (Women) & Questionnaire (METEO-Q) \\ \hline
-        Rzeszutek et al., 2020 \cite{Rzeszutek_2020} & Meteoropathy & Sex (Women) & Questionnaire (METEO-Q) \\ \hline
-        Bellini et al., 2015 \cite{Bellini_2015} & Meteoropathy & Sex (Men) & Qestionnaire (METEO-Q) \\
+        Mazza et al. 2012 \cite{meteoQ} & Meteoropathy & Sex (Women) & METEO-Q \\ \hline
+        Oniszczenko, 2020 \cite{Oniszczenko_2020} & Affective temperaments & Sex (Women) & METEO-Q \\ \hline
+        Rzeszutek et al., 2020 \cite{Rzeszutek_2020} & Meteoropathy & Sex (Women) & METEO-Q \\ \hline
+        Bellini et al., 2015 \cite{Bellini_2015} & Meteoropathy & Sex (Men) & METEO-Q \\
         \hline
     \end{tabular}
+    \begin{tablenotes}
+      \small
+      \item Note: METEO-Q is the first questionnaire designed by Mazza et al. \cite{meteoQ} to evaluate meteoropathy and sensitivity to weather.
+    \end{tablenotes}
 \end{sidewaystable}
 \renewcommand{\arraystretch}{1.0}
 
@@ -66,7 +70,7 @@ Moreover, a few previous studies suggested that meteoropathy may be linked to th
 
 \newpage
 \section{Aim of the Study}
-Although various studies have sought to understand the causes of meteoropathy, they are still not fully clarified. To our knowledge, few previous studies have conducted an analysis of long-term quantitative data related to \ac{HRV} parameters. Our study may be the first to investigate the relationship between long-term biosignal data and meteorological factors. By employing this unique approach that utilizes quantitative, longitudinal ECG data collected over seven years, our research aimed to provide insights into what meteorological factors influences HRV parameters. Additionally, we discussed how we manage the symptoms and explored the future developments in order to contribute to maintaining health. Especially, some of HRV parameters closely associated with changes in our health condition are related to the dynamics of the ANS, which has been suggested to be affected by meteorological factors in several studies. These aspects were also discussed in this study.
+Although various studies have sought to understand the causes of meteoropathy, they are still not fully clarified. To our knowledge, few previous studies have conducted an analysis of long-term objective data related to \ac{HRV} parameters. Our study may be the first to investigate the relationship between long-term biosignal data and meteorological factors. By employing this unique approach that utilizes objective, longitudinal ECG data collected over seven years, our research aimed to provide insights into what meteorological factors influences HRV parameters. Additionally, we discussed how we manage the symptoms and explored the future developments in order to contribute to maintaining health. Especially, some of HRV parameters closely associated with changes in our health condition are related to the dynamics of the ANS, which has been suggested to be affected by meteorological factors in several studies. These aspects were also discussed in this study.
 
 Achieving these aims would provide valuable insights into what meteorological factors have impacts on HRV parameters' dynamics and to what extent these factors influence them. Additionally, addressing this question could not only enhance our understanding of the relationship between them but also accelerate improving management in response to weather-related health changes.
 
