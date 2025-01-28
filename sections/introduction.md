@@ -43,7 +43,7 @@ In many previous papers, the researchers have stated results that patients are a
     \label{table:prior studies}
     \begin{tabular}{l l l l}
         \hline
-        \textbf{Author, Year} & \textbf{Symptom} & \textbf{Effective factor(s)} & \textbf{Data format} \\
+        \textbf{Author, Year} & \textbf{Symptom} & \textbf{Effective factor(s)} & \textbf{Study dataset} \\
         \hline
         L. Ma et al., 2021 \cite{L_2020} & Respiratory diseases & Temperature, atmospheric pressure, wind speed & Medical record \\ \hline
         A. Costilla-Esquivel et al., 2013 \cite{Costilla_2014} & Respiratory diseases & Temperature, humidity, precipitation & Public database \\ \hline
@@ -73,5 +73,4 @@ Moreover, a few previous studies suggested that meteoropathy may be linked to th
 Although various studies have sought to understand the causes of meteoropathy, they are still not fully clarified. To our knowledge, few previous studies have conducted an analysis of long-term objective data related to \ac{HRV} parameters. Our study may be the first to investigate the relationship between long-term biosignal data and meteorological factors. By employing this unique approach that utilizes objective, longitudinal ECG data collected over seven years, our research aimed to provide insights into what meteorological factors influences HRV parameters. Additionally, we discussed how we manage the symptoms and explored the future developments in order to contribute to maintaining health. Especially, some of HRV parameters closely associated with changes in our health condition are related to the dynamics of the ANS, which has been suggested to be affected by meteorological factors in several studies. These aspects were also discussed in this study.
 
 Achieving these aims would provide valuable insights into what meteorological factors have impacts on HRV parameters' dynamics and to what extent these factors influence them. Additionally, addressing this question could not only enhance our understanding of the relationship between them but also accelerate improving management in response to weather-related health changes.
-
 
