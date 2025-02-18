@@ -30,7 +30,7 @@ df_weather <- read.csv("./mcs_research/src/data/weather/weather_imputed.csv") # 
 date <- as.Date(df_weather$date)
 
 df_hrv <- left_join(df_weather, df_hrv, by = "date") %>%
-            select(-c(colnames(df_weather)))
+    select(-c(colnames(df_weather)))
 
 ### Delete unnecessary columns ------------------------------------------
 df_weather <- df_weather %>%
@@ -43,11 +43,8 @@ df_weather <- df_weather %>%
 original_weather <- df_weather
 df_weather <- as.data.frame(scale(df_weather))
 
-dim(df_weather)
-2565 - 233
-
 ## Set list of data for stan code ---------------------------------------
-num_pred <- 1 # 30 # length of prediction data
+num_pred <- 30 # length of prediction data
 T <- nrow(df_weather) - num_pred # length of data for estimation
 y <- df_hrv$LFHFratio * 100 # dependent variable y
 I <- sum(is.na(y[1:T])) # not include missing values during prediction period
@@ -55,12 +52,9 @@ y[is.na(y[1:T])] <- -1 # nan flag for stan (remain missing values during predict
 
 data_list <- list(
     T = T, # data length without last num_pred days
-    D = ncol(df_weather), # the number of features
-    I = I, # the number of nan values in y
-    features = as.matrix(df_weather[1:T, ]), # explanatory variable
+    I = I,
     y = y[1:T], # y from 1 to T (period for estimation)
-    T_pred = num_pred,
-    features_pred = t(t(df_weather[(T+1):(T+num_pred), ]))
+    T_pred = num_pred
 )
 
 ## Estimate parameters by stan MCMC -------------------------------------
@@ -68,19 +62,19 @@ data_list <- list(
 #        stan code includes seasonality or not?
 #        correct saveRDS file name?
 model <- stan(
-    file = "./mcs_research/src/scripts/analysis/model/first_step_season.stan",
+    file = "./mcs_research/src/scripts/analysis/model/comparison.stan",
     data = data_list,
     seed = 1,
-    iter = 6000, # 6000
-    warmup = 3500, # 3500
+    iter = 3500, # 6000
+    warmup = 1000, # 3500
     chains = 4,
     # thin = 4
     # control = c(max_treedepth = 15)
 )
 
 ### Save sampling results (Need to change file name, the results are huge size of file)
-# saveRDS(model, file = "../../model/first_step/pNN50_percent.obj")
-saveRDS(model, file = "../../model/full_period/test.obj")
+saveRDS(model, file = "../../model/comparison/LFHF_percent.obj")
+# model <- readRDS("../../model/full_period/simple/HR.obj")
 
 ## Check results --------------------------------------------------------
 mcmc_result <- rstan::extract(model)
@@ -90,29 +84,6 @@ log_lik <- extract_log_lik(model)
 waic(log_lik)
 # loo(log_lik)
 
-### Beta distribution (coefficients)  -----------------------------------
-beta_hist <- as.data.frame(mcmc_result$beta)
-colnames(beta_hist) <- colnames(df_weather)
-beta_hist <- melt(beta_hist)
-colnames(beta_hist) <- c("beta", "value")
-
-ggplot(beta_hist, aes(x=value)) +
-    geom_histogram(bins = 50) +
-    facet_wrap(~beta) +
-    ggtitle("Sampling distribution") +
-    xlab("Coefficient size") +
-    ylab("Count")
-
-#### Organize coefficients results
-beta_result <- data.frame(colnames(df_weather),
-                          apply(mcmc_result$beta, MARGIN = 2, mean)) # EAP value
-
-colnames(beta_result) <- c("feature", "coef_mean")
-beta_result[order(abs(beta_result$coef_mean), decreasing = TRUE), ]
-beta_result[order(abs(beta_result$coef_mean), decreasing = TRUE)[1:6], ]
-
-#### Store the results of beta mean (Need to change file name)
-# write.csv(beta_result, file = "./mcs_research/src/scripts/analysis/beta_result/SDNN.csv")
 
 mean(mcmc_result$sigma_w)
 mean(mcmc_result$sigma_y)
@@ -120,9 +91,6 @@ mean(mcmc_result$sigma_y)
 # stan_trace(model, inc_warmup = TRUE, pars = c("beta", "sigma_season"))
 # rhat(model, pars = c("beta", "sigma_w", "sigma_y", "sigma_season"))
 # mcmc_rhat(rhat(model, pars = "beta"))
-
-ggplot() +
-    geom_line(aes(x=1:T, y=apply(mcmc_result$season, 2, mean)))
 
 ### Plot estimated results --------------------------------------------------
 
@@ -134,33 +102,39 @@ y_filled[y[1:T] == -1] <- apply(mcmc_result$y_mis, MARGIN = 2, mean) # impute pr
 df_stan <- make_ci_df(data_array = mcmc_result$pred, y = y_filled, is_pred = FALSE)
 imputed_loc <- ifelse((y[1:T] == -1), "imputed", "original")
 plot_ssm(df_stan, title = "Estimation", imputed_loc = imputed_loc)
-p <- plot_ssm(df_stan, title = "Estimation", imputed_loc = imputed_loc)
-plotly::ggplotly(p)
+# p <- plot_ssm(df_stan, title = "Estimation", imputed_loc = imputed_loc)
+# plotly::ggplotly(p)
+
+resid <- df_stan$y - df_stan$fit
+plot(resid, type="l")
+mean(resid)
 
 ### Plot prediction result --------------------------------------------------
-df_stan <- make_ci_df(mcmc_result$pred, y=y_filled, is_pred = FALSE) # prediction interval before y_pred
+df_stan <- make_ci_df(mcmc_result$pred, y=y_filled, is_pred = FALSE) # estimation interval before y_pred
 df_pred <- make_ci_df(mcmc_result$y_pred, y_filled, is_pred = TRUE, T = T, num_pred = num_pred)
 df_all <- bind_rows(df_stan, df_pred) # combine predicted data
 
-plot_pred(df_all, data_list$T_pred, T, focus=FALSE) # plot prediction result
-
-mean(mcmc_result$sigma_y)
+plot_pred(df_all, data_list$T_pred, T, focus=TRUE) # plot prediction result
 
 ### Residuals ------------------------------------------------------
-resid <- y_filled - df_all$fit
-# plot(resid, type = "l") # see residuals between y and estimation/prediction
-acf(resid, na.action = na.pass, lag.max = 100) # autocorrelation
+error <- y_filled[(T+1):length(y_filled)] - df_pred$fit # for calculate RMSE
+rmse <- sqrt(mean(error^2, na.rm = TRUE))
+rmse
 
-PP.test(resid[1:T]) # something to test stationarity
 
-mean(resid, na.rm = TRUE) # mean of residuals, 0 would be best
+#### Main model loading
+model_main <- readRDS("../../model/first_step_season/LFHF_percent.obj")
+# model_main <- readRDS("../../model/first_step_season/.obj")
+mcmc_result_main <- rstan::extract(model_main)
+df_pred_main <- make_ci_df(mcmc_result_main$y_pred, y_filled, is_pred = TRUE, T = T, num_pred = num_pred)
+error_main <- y_filled[(T+1):length(y_filled)] - df_pred_main$fit # for calculate RMSE
+rmse_main <- sqrt(mean(error_main^2, na.rm = TRUE))
+rmse_main
 
-# hist(data_list$y - df_stan$fit, breaks = 100)
-hist(df_pred$fit - df_pred$y, breaks = 100)
+df_stan <- make_ci_df(mcmc_result_main$pred, y=y_filled, is_pred = FALSE) # estimation interval before y_pred
+df_pred <- make_ci_df(mcmc_result_main$y_pred, y_filled, is_pred = TRUE, T = T, num_pred = num_pred)
+df_all <- bind_rows(df_stan, df_pred) # combine predicted data
 
-# check evaluation index
-# sqrt(sum((df_stan$fit - data_list$y) ^ 2) / data_list$T) # RMSE
-sqrt(sum((df_pred$fit - df_pred$y) ^ 2, na.rm = TRUE) / data_list$T_pred) # RMSE
+plot_pred(df_all, data_list$T_pred, T, focus=TRUE) # plot prediction result
 
-plot(df_pred$fit - df_pred$y, type="l")
-acf((df_pred$fit - df_pred$y), lag.max = 30, na.action = na.pass)
+(132.74 - 130.71) / 132.74 * 100

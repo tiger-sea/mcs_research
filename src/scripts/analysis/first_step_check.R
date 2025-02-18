@@ -33,6 +33,8 @@ date <- as.Date(df_weather$date)
 df_hrv <- left_join(df_weather, df_hrv, by = "date") %>%
     select(-c(colnames(df_weather)))
 
+dim(df_hrv)
+
 ### Delete unnecessary columns ------------------------------------------
 df_weather <- df_weather %>%
     select(-c("date", "day_of_week", "max_gust",
@@ -45,7 +47,7 @@ original_weather <- df_weather
 df_weather <- as.data.frame(scale(df_weather))
 
 ## Set list of data for stan code ---------------------------------------
-num_pred <- 1 # 30 # length of prediction data
+num_pred <- 30 # 30 # length of prediction data
 T <- nrow(df_weather) - num_pred # length of data for estimation
 y <- df_hrv$HR # dependent variable y
 I <- sum(is.na(y[1:T])) # not include missing values during prediction period
@@ -64,10 +66,10 @@ data_list <- list(
 ## Load MCMC sample data ------------------------------------------------
 # change y into proper HRv param and file name in readRDS
 # check include season or not
-# model <- readRDS("../../model/first_step/HR.obj")
+model <- readRDS("../../model/first_step/HR.obj")
 # model <- readRDS("../../model/first_step_season/VLF.obj")
-# model <- readRDS("../../model/full_period/seasonal/RMSSD.obj")
-model <- readRDS("../../model/full_period/simple/HR.obj")
+# model <- readRDS("../../model/full_period/seasonal/LFHF_percent.obj")
+# model <- readRDS("../../model/full_period/simple/HR.obj")
 
 ## Check results --------------------------------------------------------
 mcmc_result <- rstan::extract(model)
@@ -195,20 +197,21 @@ y_filled <- y
 y_filled[y[1:T] == -1] <- apply(mcmc_result$y_mis, MARGIN = 2, mean) # impute pred of missing values
 
 #### Make data frame of y and estimated lower/median/upper range
-df_stan <- make_ci_df(data_array = mcmc_result$mu, y = y_filled, is_pred = FALSE)
+df_stan <- make_ci_df(data_array = mcmc_result$pred, y = y_filled, is_pred = FALSE)
 imputed_loc <- ifelse((y[1:T] == -1), "imputed", "original")
 diff_mu <- df_stan$y - df_stan$fit
 
 plot_ssm(df_stan, title = "", imputed_loc = imputed_loc) +
     xlab("Date") + ylab("TINN (ms)")
 p <- plot_ssm(df_stan, title = "", imputed_loc = imputed_loc) +
-    xlab("Date") + ylab(TeX("Heart rate (ms)")) # + theme(plot.title = element_text(hjust = 0.5))
-# p
+    xlab("Date") + ylab(TeX("Heart rate (bpm)")) # + theme(plot.title = element_text(hjust = 0.5))
+p
 p + ylim(c(60, NaN)) # for HR
 # p + ylim(c(NaN, 110)) # for SDNN, RMSSD
 # p + ylim(c(NaN, 1200)) # for LF
 # p + ylim(c(NaN, 1500)) # for HF
-# ggsave("./mcs_research/src/fig/analysis/HF.png", dpi=1000, width = 8229, height = 4447, units = "px")
+# ggsave("./mcs_research/src/fig/analysis/mu/HR.png", dpi=1000, width = 8000, height = 3200, units = "px")
+# ggsave("./mcs_research/src/fig/analysis/pred/HR.png", dpi=1000, width = 8000, height = 3200, units = "px")
 
 # plotly::ggplotly(p)
 
@@ -220,19 +223,33 @@ df_all <- bind_rows(df_stan, df_pred) # combine predicted data
 
 plot_pred(df_all, data_list$T_pred, T, focus=FALSE) # plot prediction result
 
+plot_pred(df_all, data_list$T_pred, T, focus=FALSE) + ylim(c(60, NaN)) +
+    ylab(TeX("Heart rate (bpm)")) + xlab("Date (YYYY-mm)")
+
 mean(mcmc_result$sigma_season)
 
+dim(df_stan)
+
 ### Residuals ------------------------------------------------------
-resid <- y_filled - df_all$fit
+library(forecast)
+library(tseries)
+resid <- y_filled[-1] - df_stan$fit
 # plot(resid, type = "l") # see residuals between y and estimation/prediction
 acf(resid, na.action = na.pass, lag.max = 100) # autocorrelation
 
-PP.test(resid[1:T]) # something to test stationarity
+# PP.test(resid[1:T]) # something to test stationarity
 
 mean(resid, na.rm = TRUE) # mean of residuals, 0 would be best
+sqrt(var(resid))
+
+ggplot() +
+    geom_histogram(aes(x=resid))
+acf(resid)
+
+checkresiduals(resid)
 
 # hist(data_list$y - df_stan$fit, breaks = 100)
-hist(df_pred$fit - df_pred$y, breaks = 100)
+# hist(df_pred$fit[-1] - df_pred$y, breaks = 100)
 
 # check evaluation index
 # sqrt(sum((df_stan$fit - data_list$y) ^ 2) / data_list$T) # RMSE

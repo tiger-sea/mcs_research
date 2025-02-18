@@ -1,6 +1,9 @@
-# Main code for estimation, prediction, and evaluation --------------------
+# Second step as an option: estimate residuals of y and mu (state) following same procedure as first step --------------------
+## y - mu indicates time series which doesn't have long term trend, so aiming short term fluctuation is kinda goal
 
-## Import ------------------------------------------------------------------
+## Feature selection by size of coefficients after model estimation ------
+
+## Import ---------------------------------------------------------------
 
 ### Bayes
 library(rstan)
@@ -16,8 +19,7 @@ library(ggfortify)
 library(gridExtra)
 library(patchwork)
 library(ggplot2)
-library(plotly)
-
+library(latex2exp)
 
 ### Utils
 source("./mcs_research/src/scripts/analysis/kkplot.R")
@@ -41,17 +43,12 @@ df_weather <- df_weather %>%
               "mean_vapor", "max_depth",
               "most_direction", "most_direction_dummy"))
 
-
-### Delete small coefficients variables ---------------------------------
-df_weather <- df_weather %>%
-    select(-c())
-
 ### Scale explanatory variable mean=0, sigma=1 --------------------------
 original_weather <- df_weather
 df_weather <- as.data.frame(scale(df_weather))
 
 ## Set list of data for stan code ---------------------------------------
-num_pred = 30 # length of prediction data
+num_pred <- 1 # 30 # length of prediction data
 T <- nrow(df_weather) - num_pred # length of data for estimation
 y <- df_hrv$HR # dependent variable y
 I <- sum(is.na(y[1:T])) # not include missing values during prediction period
@@ -67,25 +64,20 @@ data_list <- list(
     features_pred = t(t(df_weather[(T+1):(T+num_pred), ]))
 )
 
-
-
-## Estimate parameters by stan MCMC -------------------------------------
-model <- stan(
-    file = "./mcs_research/src/scripts/analysis/model/first_step_season.stan",
-    data = data_list,
-    seed = 1,
-    iter = 500,
-    warmup = 250,
-    chains = 4,
-    # control = c(max_treedepth = 15)
-)
-
-# saveRDS(model, file = "../../model/bwp_season_HR_30.obj")
+## Load MCMC sample data ------------------------------------------------
+# change y into proper HRv param and file name in readRDS
+# check include season or not
+# model <- readRDS("../../model/first_step/HR.obj")
+# model <- readRDS("../../model/first_step_season/VLF.obj")
+# model <- readRDS("../../model/full_period/seasonal/RMSSD.obj")
+model <- readRDS("../../model/full_period/simple/HR.obj")
+model_second <- readRDS("../../model/full_period/test.obj")
 
 ## Check results --------------------------------------------------------
 mcmc_result <- rstan::extract(model)
+mcmc_result_second <- rstan::extract(model_second)
 
-### WAIC ------------------------------------------------------
+### WAIC ----------------------------------------------------------------
 log_lik <- extract_log_lik(model)
 waic(log_lik)
 # loo(log_lik)
@@ -96,27 +88,110 @@ colnames(beta_hist) <- colnames(df_weather)
 beta_hist <- melt(beta_hist)
 colnames(beta_hist) <- c("beta", "value")
 
+label_list <- c(`mean_temp`="Mean temperature",
+                `max_temp`="Maximum temperature",
+                `min_temp`="Minimum temperature",
+                `mean_hum`="Mean relative humidity",
+                `min_hum`="Minimum relative humidity",
+                `mean_press_sea`="Mean sea-level pressure",
+                `min_press_sea`="Minimum sea-level pressure",
+                `total_preci`="Total precipitation",
+                `hourly_max_preci`="Hourly maximum precipitation",
+                `total_snowfall`="Total snowfall",
+                `sun_hour`="Total sunshine duration",
+                `mean_wind_speed`="Mean wind speed")
+
+label <- as_labeller(label_list)
+
 ggplot(beta_hist, aes(x=value)) +
-    geom_histogram(bins = 50) +
-    facet_wrap(~beta)
+    geom_histogram(bins = 100) +
+    facet_wrap(~beta, labeller = label) +
+    # ggtitle("Sampling distribution") +
+    xlab("Coefficient size") +
+    ylab("Count")
 
-#### Organize coefficients results
-beta_result <- data.frame(colnames(df_weather),
-                          apply(mcmc_result$beta, MARGIN = 2, mean))
+# ggsave("./mcs_research/src/fig/mcmc_result/LFHF_percent.png", dpi=1000, width = 8229, height = 4447, units = "px")
 
-colnames(beta_result) <- c("feature", "coef_mean")
-beta_result[order(abs(beta_result$coef_mean), decreasing = TRUE), ]
+#### EAP estimation
+eap_result <- data.frame(colnames(df_weather),
+                         apply(mcmc_result$beta, MARGIN = 2, mean)) # EAP value
 
+colnames(eap_result) <- c("feature", "coef_mean")
+eap_result[order(abs(eap_result$coef_mean), decreasing = TRUE), ]
+eap_result[order(abs(eap_result$coef_mean), decreasing = TRUE)[1:6], ]
 
-traceplot(model, pars = c("beta", "sigma_w", "sigma_y", "sigma_season"))
+eap_result$coef_mean <- round(eap_result$coef_mean, 4)
+eap_result[order(abs(eap_result$coef_mean), decreasing = TRUE), ]
+eap_result[order(abs(eap_result$coef_mean), decreasing = TRUE)[1:6], ]
+
+#### MAP estimation
+get_map <- function(param_samples) {
+    dens <- density(param_samples)
+    map_value <- dens$x[which.max(dens$y)]
+    return(map_value)
+}
+map_result <- data.frame(colnames(df_weather),
+                         apply(mcmc_result$beta, 2, get_map))
+colnames(map_result) <- c("feature", "coef_max")
+map_result[order(abs(map_result$coef_max), decreasing = TRUE), ]
+map_result$coef_max <- round(map_result$coef_max, 5)
+map_result[order(abs(map_result$coef_max), decreasing = TRUE), ]
+# map_result[order(abs(map_result$coef_max), decreasing = TRUE)[1:6], ]
+
+#### Organize both
+beta_result <- cbind(eap_result, map_result$coef_max)
+colnames(beta_result) <- c("feature", "coef_mean", "coef_max")
+beta_result[order(abs(beta_result$coef_mean), decreasing = TRUE)[1:6], ]
+
+# beta_result[x,2] / sqrt(var(original_weather$)) # inverse transform
+
+#### 50% Credible interval
+ci_result <- data.frame(colnames(df_weather),
+                        map_result$coef_max,
+                        t(apply(mcmc_result$beta, 2, quantile, probs = c(0.25, 0.75))))
+colnames(ci_result) <- c("feature", "map", "lwr", "upr")
+ci_result$lwr <- round(ci_result$lwr, 4)
+ci_result$upr <- round(ci_result$upr, 4)
+ci_result[order(abs(map_result$coef_max), decreasing = TRUE),]
+ci_result <- ci_result %>%
+    mutate(feature = recode(feature, !!!label_list))
+ci_result
+
+# ci_result$map
+# round(ci_result$map, )
+
+#### check values
+mean(mcmc_result$sigma_w)
+mean(mcmc_result$sigma_y)
+mean(mcmc_result$tau)
+
+get_map(mcmc_result$sigma_w)
+get_map(mcmc_result$sigma_y)
+get_map(mcmc_result$tau)
+
+ggplot() +
+    geom_histogram(aes(x=mcmc_result$tau), bins = 100) +
+    xlab("Coefficient size") +
+    ylab("Count")
+
+#### MCMC sampling check
+labels <- c("Mean sea-level pressure", "Minimum sea-level pressure", "Mean relative humidity",
+            "Minimum relative humidity", "Total precipitation", "Hourly maximum precipitation",
+            "Total snowfall", "Total sunshine duration", "Mean temperature", "Minimum temperature",
+            "Maximum temperature", "Mean wind speed")
+p <- traceplot(model, pars = c("beta")) # , "sigma_w", "sigma_y"))
+p + facet_wrap(~parameter, labeller = labeller(parameter = setNames(labels, paste0("beta[", 1:12, "]"))),scales = "free_y")
+# this traceplot's xticks are from 3500 to 6000, which may be pointed out.
+
 # stan_trace(model, inc_warmup = TRUE, pars = c("beta", "sigma_season"))
-# rhat(model, pars = c("beta", "sigma_w", "sigma_y", "sigma_season"))
+rhat(model, pars = c("beta", "sigma_w", "sigma_y", "tau"))
 # mcmc_rhat(rhat(model, pars = "beta"))
-
-median(mcmc_result$sigma_y)
 
 ggplot() +
     geom_line(aes(x=1:T, y=apply(mcmc_result$season, 2, mean)))
+
+ggplot() +
+    geom_line(aes(x=1:T, y=apply(mcmc_result$mu, 2, mean)-apply(mcmc_result$mu_with_component, 2, mean)+apply(mcmc_result$season, 2, mean)))
 
 ### Plot estimated results --------------------------------------------------
 
@@ -126,28 +201,74 @@ y_filled[y[1:T] == -1] <- apply(mcmc_result$y_mis, MARGIN = 2, mean) # impute pr
 
 #### Make data frame of y and estimated lower/median/upper range
 df_stan <- make_ci_df(data_array = mcmc_result$mu, y = y_filled, is_pred = FALSE)
+imputed_loc <- ifelse((y[1:T] == -1), "imputed", "original")
+diff_mu <- df_stan$y - df_stan$fit
 
-plot_ssm(df_stan, title = "Estimation")
+plot_ssm(df_stan, title = "", imputed_loc = imputed_loc) +
+    xlab("Date") + ylab("TINN (ms)")
+p <- plot_ssm(df_stan, title = "", imputed_loc = imputed_loc) +
+    xlab("Date") + ylab(TeX("HF ($\\ms^2$)")) # + theme(plot.title = element_text(hjust = 0.5))
+# p
+p + ylim(c(60, NaN)) # for HR
+# p + ylim(c(NaN, 110)) # for SDNN, RMSSD
+# p + ylim(c(NaN, 1200)) # for LF
+# p + ylim(c(NaN, 1500)) # for HF
+# ggsave("./mcs_research/src/fig/analysis/HF.png", dpi=1000, width = 8229, height = 4447, units = "px")
+
+# plotly::ggplotly(p)
+
+
+ggplot(df_stan) +
+    geom_line(aes(x=time, y=diff_mu))
+
+T = length(diff_mu)
+data_list <- list(
+    T = T, # data length without last num_pred days
+    D = ncol(df_weather), # the number of features
+    I = 0, # the number of nan values in y
+    features = as.matrix(df_weather[1:T, ]), # explanatory variable
+    y = diff_mu[1:T] # y from 1 to T (period for estimation)
+)
+
+model_second <- stan(
+    file = "./mcs_research/src/scripts/analysis/model/option_season.stan",
+    data = data_list,
+    seed = 1,
+    iter = 6000, # 6000
+    warmup = 3500, # 3500
+    chains = 4,
+    # thin = 4
+    # control = c(max_treedepth = 15)
+)
+
+mcmc_result_second <- rstan::extract(model_second)
+
+#### Make data frame of y and estimated lower/median/upper range
+df_stan_second <- make_ci_df(data_array = mcmc_result_second$mu, y = diff_mu, is_pred = FALSE)
+
+ggplot() +
+    geom_line(aes(x=df_stan$time, y=df_stan_second$fit), color="red") +
+    geom_point(aes(x=df_stan$time, y=diff_mu))
+
+
 
 ### Plot prediction result --------------------------------------------------
-df_stan <- make_ci_df(mcmc_result$pred, y=y_filled, is_pred = F) # prediction interval before y_pred
+df_stan <- make_ci_df(mcmc_result$pred, y=y_filled, is_pred = FALSE) # prediction interval before y_pred
 df_pred <- make_ci_df(mcmc_result$y_pred, y_filled, is_pred = TRUE, T = T, num_pred = num_pred)
 df_all <- bind_rows(df_stan, df_pred) # combine predicted data
 
-plot_pred(df_all, data_list$T_pred, T, focus=TRUE) # plot prediction result
+plot_pred(df_all, data_list$T_pred, T, focus=FALSE) # plot prediction result
+
+mean(mcmc_result$sigma_season)
 
 ### Residuals ------------------------------------------------------
 resid <- y_filled - df_all$fit
-# gg <- ggplot() +
-#     geom_line(aes(x=df_all$time, y=resid))
-# ggplotly(gg)
-plot(resid, type = "l") # see residuals between y and estimation/prediction
-
+# plot(resid, type = "l") # see residuals between y and estimation/prediction
 acf(resid, na.action = na.pass, lag.max = 100) # autocorrelation
 
-PP.test(y_filled[1:T]-df_all$fit[1:T]) # something to test stationarity
+PP.test(resid[1:T]) # something to test stationarity
 
-mean(y-df_all$fit, na.rm = TRUE) # mean of residuals, 0 would be best
+mean(resid, na.rm = TRUE) # mean of residuals, 0 would be best
 
 # hist(data_list$y - df_stan$fit, breaks = 100)
 hist(df_pred$fit - df_pred$y, breaks = 100)

@@ -1,7 +1,7 @@
 plot_ssm <- function(df, title = "", imputed_loc) {
     ggplot(data = df, aes(x=time, y=y)) +
         geom_point(aes(color=imputed_loc), alpha=0.6, size=0.9) +
-        scale_color_manual(values = c("imputed" = "red", "original" = "black")) +
+        scale_color_manual(values = c("imputed" = "black", "original" = "black")) + # change imputed point color to red
         geom_line(aes(y=fit), linewidth=1.2, color="red") +
         geom_ribbon(aes(ymin=lwr, ymax=upr), alpha=0.3) +
         scale_x_date(date_labels = "%Y-%m",
@@ -40,7 +40,7 @@ plot_pred <- function(df, len_pred, T, focus=TRUE) {
                          limits = as.Date(c("2017-07-01", "2024-09-10"))) +
             theme(axis.text.x = element_text(angle = 90, vjust = 0.5),
                   aspect.ratio = 3/10,) +
-            labs(title = "Estimated and predicted data")
+            labs(title = "Estimation and 30 days forecast")
     }
 
 }
